@@ -1,0 +1,106 @@
+{
+  "type": "run_end",
+  "status": "failed",
+  "summary": "The browser or its page ended unexpectedly during screenshot capture, before the cart-addition checks could begin.\nCheck the browser-runner lifecycle and screenshot capture process for premature page, context, or browser shutdowns, then rerun the test.",
+  "one_liner": "The run stopped because the browser page was closed before the screenshot could be saved.",
+  "final_state": {},
+  "reason": "Screenshot failed: TargetClosedError: screenshot: Target page, context or browser has been closed",
+  "duration": 50.5,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_empty_message_check": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "visual",
+        "step": 2,
+        "query": "whether the \"Cart is empty\" message in the cart table is present",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the cart empty message is present",
+        "expected_value": "true",
+        "subject": "\"Cart is empty\" message in the cart",
+        "must_be": "present"
+      },
+      "header_cart_badge_zero_check": {
+        "extracted_value": "0",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '0' -> '0' after ['strip']; equals '0' -> PASS",
+        "analyzer_type": "visual",
+        "step": 2,
+        "query": "the item count displayed in the cart badge in the header navigation",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0"
+      }
+    },
+    "variables": {
+      "cart_empty_message_check": {
+        "syntax": "{{cart_empty_message_check}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_zero_check": {
+        "syntax": "{{header_cart_badge_zero_check}}",
+        "value": "0",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(failed) The run stopped because the browser page was closed before the screenshot could be saved."
+  },
+  "credits_consumed": 13.99962,
+  "session_dir": "~/.testmuai/kaneai/sessions/2ca29c7d-e8be-4bd8-8729-58c8797e8dbb",
+  "run_dir": "~/.testmuai/kaneai/sessions/2ca29c7d-e8be-4bd8-8729-58c8797e8dbb/runs/0",
+  "result_code": 510,
+  "reason_code": "infra_error.screenshot_failed",
+  "per_flow_metadata": [
+    {
+      "result_code": "510",
+      "reason_code": "infra_error.screenshot_failed",
+      "error_message": "Screenshot failed: TargetClosedError: screenshot: Target page, context or browser has been closed",
+      "summary": "The browser or its page ended unexpectedly during screenshot capture, before the cart-addition checks could begin.\nCheck the browser-runner lifecycle and screenshot capture process for premature page, context, or browser shutdowns, then rerun the test.",
+      "one_liner": "The run stopped because the browser page was closed before the screenshot could be saved.",
+      "credits_consumed": 13.99962
+    }
+  ],
+  "run_id": "run-0",
+  "verdict": {
+    "confirmed": false,
+    "status": "broken",
+    "family": "environment_issue",
+    "category": "platform_failure",
+    "category_proposal": "",
+    "severity": "major",
+    "root_cause": "The browser or its page ended unexpectedly during screenshot capture, before the cart-addition checks could begin.",
+    "agent_fault_assessment": "The agent correctly opened the cart page and checked the initial badge state. It did not perform any prohibited cart actions or navigation; the run ended because the browser target was closed while the system attempted to capture a screenshot.",
+    "bug_title": "Browser target closed during screenshot capture",
+    "signals": [],
+    "confidence": 0.93,
+    "suggestion": "Check the browser-runner lifecycle and screenshot capture process for premature page, context, or browser shutdowns, then rerun the test.",
+    "one_liner": "The run stopped because the browser page was closed before the screenshot could be saved.",
+    "relevant_steps": [
+      1,
+      2
+    ],
+    "culprit_step": "0-4",
+    "credits_consumed": 2.2179,
+    "known_bug_id": "",
+    "category_name": "",
+    "mode": "terminal"
+  },
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M87BW04XNS2BYCS7XYJZJFEP/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T18:08:47.101Z"
+}

@@ -1,0 +1,268 @@
+{
+  "type": "run_end",
+  "status": "failed",
+  "summary": "The order confirmation is using the wrong amount after checkout. Three Settled Tees are correctly priced at $54.00 before the order is placed, but the completed order shows a $60.00 charge.\nFix the order-confirmation charge calculation so it carries forward the checkout total of $54.00, then add a test that compares the checkout total with the confirmed charged amount.\nevidence: objective_contradiction: Charged: $60.00\nevidence: objective_contradiction: Order total: $54.00",
+  "one_liner": "The completed order reports a $60.00 charge even though the cart and checkout total $54.00.",
+  "final_state": {},
+  "reason": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
+  "duration": 131.3,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_empty_message_visible": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "whether the \"Cart is empty\" message is present in the cart table",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the cart empty message is present",
+        "expected_value": "true",
+        "subject": "\"Cart is empty\"",
+        "must_be": "present",
+        "code_js": "el(15).innerText.trim() === 'Cart is empty'",
+        "wrapped_js": "(els) => {\n  const __m = {15: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(15).innerText.trim() === 'Cart is empty');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"Cart is empty\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_count": {
+        "extracted_value": "Cart 0",
+        "operator": "equals",
+        "transforms": [
+          "extract_number"
+        ],
+        "json_path": null,
+        "reasoning": "value: 'Cart 0' -> '0' after ['extract_number']; equals '0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "the cart item count shown in the header cart link",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0",
+        "code_js": "el(3).innerText",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "settled_tee_quantity": {
+        "extracted_value": "3",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '3' -> '3' after ['strip']; equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 12,
+        "query": "the quantity value in the Settled Tee row of the cart table",
+        "condition": "the Settled Tee row shows a quantity of exactly 3",
+        "human_description": "Reading the Settled Tee quantity from the cart table",
+        "expected_value": "3",
+        "code_js": "el(17).innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {17: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(17).innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"3\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "cart_total": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 12,
+        "query": "the cart total amount in the order summary",
+        "condition": "the cart total is exactly $54.00",
+        "human_description": "Reading the cart total from the order summary",
+        "expected_value": "$54.00",
+        "code_js": "(el(19).innerText.match(/\\$[\\d,.]+/)||[])[0]||null",
+        "wrapped_js": "(els) => {\n  const __m = {19: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(19).innerText.match(/\\$[\\d,.]+/)||[])[0]||null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "checkout_summary_settled_tee": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 16,
+        "query": "whether 3 × Settled Tee appears in the checkout summary line",
+        "condition": "the checkout summary lists 3 × Settled Tee",
+        "human_description": "Checking whether the checkout summary includes the Settled Tee quantity",
+        "expected_value": "true",
+        "subject": "3 × Settled Tee in the checkout summary",
+        "must_be": "present",
+        "code_js": "el(6).innerText.trim().startsWith('3 × Settled Tee')",
+        "wrapped_js": "(els) => {\n  const __m = {6: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(6).innerText.trim().startsWith('3 × Settled Tee'));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"3 × Settled Tee @ $18.00 = $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "order_total": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 16,
+        "query": "the order total amount in the checkout summary",
+        "condition": "the order total is exactly $54.00",
+        "human_description": "Reading the order total from the checkout summary",
+        "expected_value": "$54.00",
+        "code_js": "(el(7).innerText.match(/\\$[\\d,.]+/) || [null])[0]",
+        "wrapped_js": "(els) => {\n  const __m = {7: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(7).innerText.match(/\\$[\\d,.]+/) || [null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Order total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "charged_amount": {
+        "extracted_value": "$60.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$60.00' -> '$60.00' after ['strip']; equals '$54.00' -> FAIL",
+        "analyzer_type": "textual_visual",
+        "step": 20,
+        "query": "the charged amount shown in the order confirmation",
+        "condition": "the order confirmation shows a charged amount of exactly $54.00",
+        "human_description": "Reading the charged amount from the order confirmation",
+        "expected_value": "$54.00",
+        "code_js": "(el(13).innerText.match(/\\$[\\d.,]+/) || [null])[0]",
+        "wrapped_js": "(els) => {\n  const __m = {13: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(13).innerText.match(/\\$[\\d.,]+/) || [null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Charged: $\"i"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_empty_message_visible": {
+        "syntax": "{{cart_empty_message_visible}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_count": {
+        "syntax": "{{header_cart_badge_count}}",
+        "value": "Cart 0",
+        "type": "memory",
+        "secret": false
+      },
+      "settled_tee_quantity": {
+        "syntax": "{{settled_tee_quantity}}",
+        "value": "3",
+        "type": "memory",
+        "secret": false
+      },
+      "cart_total": {
+        "syntax": "{{cart_total}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      },
+      "checkout_summary_settled_tee": {
+        "syntax": "{{checkout_summary_settled_tee}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "order_total": {
+        "syntax": "{{order_total}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      },
+      "charged_amount": {
+        "syntax": "{{charged_amount}}",
+        "value": "$60.00",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(failed) The completed order reports a $60.00 charge even though the cart and checkout total $54.00."
+  },
+  "credits_consumed": 43.256072499999995,
+  "session_dir": "~/.testmuai/kaneai/sessions/2bfbda33-5b0a-4a5c-9aa3-715c91d49f07",
+  "run_dir": "~/.testmuai/kaneai/sessions/2bfbda33-5b0a-4a5c-9aa3-715c91d49f07/runs/0",
+  "result_code": 740,
+  "reason_code": "assertion_error.confirmed_product_bug",
+  "per_flow_metadata": [
+    {
+      "result_code": "740",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "error_message": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
+      "summary": "The order confirmation is using the wrong amount after checkout. Three Settled Tees are correctly priced at $54.00 before the order is placed, but the completed order shows a $60.00 charge.\nFix the order-confirmation charge calculation so it carries forward the checkout total of $54.00, then add a test that compares the checkout total with the confirmed charged amount.\nevidence: objective_contradiction: Charged: $60.00\nevidence: objective_contradiction: Order total: $54.00",
+      "one_liner": "The completed order reports a $60.00 charge even though the cart and checkout total $54.00.",
+      "credits_consumed": 43.256072499999995
+    }
+  ],
+  "run_id": "run-0",
+  "verdict": {
+    "confirmed": true,
+    "status": "failed",
+    "family": "application_issue",
+    "category": "ui_data_defect",
+    "category_proposal": "",
+    "severity": "major",
+    "root_cause": "The order confirmation is using the wrong amount after checkout. Three Settled Tees are correctly priced at $54.00 before the order is placed, but the completed order shows a $60.00 charge.",
+    "agent_fault_assessment": "The agent did not cause the outcome. It added the requested shirt three times, and the cart and checkout both showed three Settled Tees totaling $54.00 before the order was placed. The amount changed only in the confirmation produced by the application.",
+    "bug_title": "Order confirmation charges $60.00 for a $54.00 order",
+    "signals": [
+      {
+        "step": "0-20",
+        "kind": "objective_contradiction",
+        "excerpt": "Charged: $60.00"
+      },
+      {
+        "step": "0-16",
+        "kind": "objective_contradiction",
+        "excerpt": "Order total: $54.00"
+      }
+    ],
+    "confidence": 0.99,
+    "suggestion": "Fix the order-confirmation charge calculation so it carries forward the checkout total of $54.00, then add a test that compares the checkout total with the confirmed charged amount.",
+    "one_liner": "The completed order reports a $60.00 charge even though the cart and checkout total $54.00.",
+    "relevant_steps": [
+      0,
+      6,
+      8,
+      12,
+      16,
+      20
+    ],
+    "culprit_step": "0-20",
+    "credits_consumed": 4.74015,
+    "known_bug_id": "BUG-2",
+    "category_name": "",
+    "mode": "terminal"
+  },
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M87BY230532KV8QA9HA4F5K7/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T18:11:09.636Z"
+}

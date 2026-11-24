@@ -1,0 +1,11 @@
+{
+  "id": "cart-badge-wrong-v3",
+  "match": true,
+  "computed": {
+    "algorithm": "sha256",
+    "scheme": "settled-fp-v2",
+    "locked": "ab68d4b9fed96eb516ec8c2ef8cacc8c076f10e322dc1012fef608730e3fb9d3",
+    "guard": "352b362d0915e218c6bedcdd913c17a54bcc98051bdfc4b2783193cf5e6968de",
+    "combined": "c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa"
+  }
+}
