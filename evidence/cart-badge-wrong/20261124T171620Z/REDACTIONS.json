@@ -1,0 +1,96 @@
+{
+  "dir": "evidence/cart-badge-wrong/20261124T171620Z",
+  "redacted_at": "2026-11-24T17:28:10.427Z",
+  "rules": [
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+    "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+    "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+    "(^\\s*(?:user_id|org_id|account_id):\\s*)(['\"]?)\\d+\\2",
+    "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+    "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+    "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+    "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+    "\\/Users\\/[^/\"'\\s]+\\/",
+    "\\/home\\/[^/\"'\\s]+\\/"
+  ],
+  "files": {
+    "guard.evidence": {
+      "pre_redaction_sha256": "79bbfc804df1b8d373936cff68749f98b903b63c6e8a970f82c94b86b3f98cce",
+      "inner_files_redacted": {
+        "tests/in-this-fresh-independent-browser-sessio-bd888b6b/result.yaml": "f31bec36519b79277ca8a0f43f4d4fd307f03136959a439183e2c627229186da"
+      }
+    },
+    "locked.evidence": {
+      "pre_redaction_sha256": "470b38b732eae7bdae9372fe555cc3ee5a87f78d71cd612f8db860134a346eda",
+      "inner_files_redacted": {
+        "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/result.yaml": "aa0d71abddee9f5bb228d53f474d87b5486647f13edf260823f8593ddc4cae0a"
+      }
+    }
+  },
+  "previous": {
+    "dir": "evidence/cart-badge-wrong/20261124T171620Z",
+    "redacted_at": "2026-11-24T17:26:42.508Z",
+    "rules": [
+      "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+      "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+      "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+      "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+      "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+      "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+      "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+      "\\/Users\\/[^/\"'\\s]+\\/",
+      "\\/home\\/[^/\"'\\s]+\\/"
+    ],
+    "files": {
+      "guard.evidence": {
+        "pre_redaction_sha256": "3a7a14d9294dc8b8f4f8b24ce49bc3c0ee8eddc00439b3fd3a4b3f7874ab51ae",
+        "inner_files_redacted": {
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/auteur/execution.json": "3b61314f5ddeebd8cd0a51dc4f6f13954a9b143c60f2be096dd758958ce7ad83",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/0-stability-ledger-draft.json": "e871c47eafc2ceca2dd6ca6fdbd938780ff989b4163b9e7a1278816da98d656b",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/1-stability-ledger-draft.json": "c15508dc85f99c85f6293f130072246592b4ad8d1a9da9fcf078bda9ab51b833",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/1-stability-ledger.ndjson": "64924ef4ddbde843f573d37f70cfd2f5926fffe6c64294b1d9a87b6fcb3a8717",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/2-run.log": "9e8b5818f15f99d935dad5f3b9ff471ed40b298a1ff18d8b35fc138539295f75",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/2-stability-ledger-draft.json": "2fc24a137a1141b01edbe724c71bb7b41836e5688226e8f86058409aedba9d41",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/2-stability-ledger.ndjson": "0b679026b15e62cc8026e428c42d5dfaade5b062650178f342260e899a18d2e1",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/runner-stderr.log": "85ee3b604a1b994a75a491eb0614e92600c4d8d6ad3b09a74cbd23f77ce81356",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/logs/tui.log": "3f4a8156de3673746c5e972956087f817b4d92252e120d263c3feef56813b000",
+          "tests/in-this-fresh-independent-browser-sessio-bd888b6b/result.yaml": "8a8591b0e9b37fa874bd86b9cb476a52be7e2846432045fa1d8f7aa1eb0ac25a"
+        }
+      },
+      "guard.ndjson": {
+        "pre_redaction_sha256": "c722f3478b5af17a4c81f705176ce40a557d45e294c0fd0d4a2e0a6089713b93"
+      },
+      "guard.run_end.json": {
+        "pre_redaction_sha256": "b053c2663caa3337d1ba9955c87c0375ae264e2145ccf7d7633107ed161f336c"
+      },
+      "guard.stderr": {
+        "pre_redaction_sha256": "4c69579831a7dd940f155f9ed71c470df1f8e9041dc67b1b942b1fbfdf55c1d6"
+      },
+      "locked.evidence": {
+        "pre_redaction_sha256": "3764b4aa64e65328bced04369d14f55afada129c3430ac1e499343602f423dd8",
+        "inner_files_redacted": {
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/auteur/execution.json": "6f5a2c3685ae26eaed25df16abfefcb1fd20f5dbd0effd121d6597bb49449690",
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/logs/0-run.log": "8890c391e741db5f1167188c6fd7cede8f1171d74076d8a5cb6a860c34ffad41",
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/logs/0-stability-ledger-draft.json": "c439b6ed4c5b4c84b02f03e9348c10f03f64cb27c09ed091858c94c9930b6f1f",
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/logs/runner-stderr.log": "3e9f9ac02e93df9b6c8d2139e65e10385502421850830aea97b8de450227d654",
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/logs/tui.log": "c4033be87382244ff3ee2ef1358c0bd47604747cac98db926d61a40dc34ebfed",
+          "tests/open-http-localhost-3000-cart-if-the-car-9b9ef6a5/result.yaml": "f8263af313f276e7206481825674c963ece3db1b050cf7277bf90d369b4cd769"
+        }
+      },
+      "locked.ndjson": {
+        "pre_redaction_sha256": "6708e7115164041a893c0c4fa621ed0a186ee468bad0606e8b6be307e1424033"
+      },
+      "locked.run_end.json": {
+        "pre_redaction_sha256": "ab0e71491b2219e32aafac2943f831af0a0d34f85b75e14057907a6df4e904bd"
+      },
+      "locked.stderr": {
+        "pre_redaction_sha256": "420f191b268e59e9290153f8aae7429c6deec6d30e59190ccf05d5cd6a141daf"
+      },
+      "summary.json": {
+        "pre_redaction_sha256": "c43f23d806c3828bd56a127be2d971c168a29015d0ffaa6b2938b2443c3006fa"
+      }
+    }
+  }
+}

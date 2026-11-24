@@ -1,0 +1,87 @@
+{
+  "dir": "evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z",
+  "redacted_at": "2026-11-24T17:28:10.301Z",
+  "rules": [
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+    "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+    "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+    "(^\\s*(?:user_id|org_id|account_id):\\s*)(['\"]?)\\d+\\2",
+    "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+    "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+    "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+    "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+    "\\/Users\\/[^/\"'\\s]+\\/",
+    "\\/home\\/[^/\"'\\s]+\\/"
+  ],
+  "files": {
+    "kane-evidence-packs/guard-ed34e3b2.evidence": {
+      "pre_redaction_sha256": "5813e6f2e378bf25cbeb256492fa96ab78c7c7c5e4e3000db5a7854ea6e7548c",
+      "inner_files_redacted": {
+        "tests/complete-checkout-with-the-items-current-f2a725a7/result.yaml": "38154e57bde844e9527a8f3085bd46d784b70b8c4e739504b86555bb1afff247"
+      }
+    },
+    "kane-evidence-packs/locked-a496216f.evidence": {
+      "pre_redaction_sha256": "2b783c93ea0f8dd2fcda26fe2efcff28204bfb9c783202fdf8a22755f338927b",
+      "inner_files_redacted": {
+        "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/result.yaml": "df296ba3fc06b734b70178b97470d2ab41941242168d8d8d8949c9cd1649d05a"
+      }
+    }
+  },
+  "previous": {
+    "dir": "evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z",
+    "redacted_at": "2026-11-24T17:26:42.363Z",
+    "rules": [
+      "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+      "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+      "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+      "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+      "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+      "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+      "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+      "\\/Users\\/[^/\"'\\s]+\\/",
+      "\\/home\\/[^/\"'\\s]+\\/"
+    ],
+    "files": {
+      "guard.ndjson": {
+        "pre_redaction_sha256": "5184597ea44d7b81c9b05f40ff8a908c340b2be07e12d4dc85ae8c11738510dc"
+      },
+      "guard.run_end.json": {
+        "pre_redaction_sha256": "f8a6ce8cb8dc244feafec0044845a9d1dbcd7dfab4da6df8884a3d60b7a937b6"
+      },
+      "guard.stderr": {
+        "pre_redaction_sha256": "0de9c4979d44292d41f75abf1ec4c0380ff075849e345c3a63c84a531b0679f4"
+      },
+      "kane-evidence-packs/guard-ed34e3b2.evidence": {
+        "pre_redaction_sha256": "590dddf9e0dce5ff878e21ff34c20a7098fad7fb3383ef5967e482b18dcd0ac0",
+        "inner_files_redacted": {
+          "tests/complete-checkout-with-the-items-current-f2a725a7/auteur/execution.json": "e62fd8fd9847ffe90a70a823000354619b06ab225085c670338e3dce3fe13009",
+          "tests/complete-checkout-with-the-items-current-f2a725a7/logs/0-stability-ledger-draft.json": "90fff59ddfb176b743cb1c917c55336642c873a67ebc1689293fb249281243d6",
+          "tests/complete-checkout-with-the-items-current-f2a725a7/logs/runner-stderr.log": "1542ab662ad016d3bbb4751e89b5efb466adb719396192c597ea77a96eae351b",
+          "tests/complete-checkout-with-the-items-current-f2a725a7/logs/tui.log": "1ee88ba216d21e9d3bfcbde7662181155582074eb0b59159974426f5284e768a",
+          "tests/complete-checkout-with-the-items-current-f2a725a7/result.yaml": "506c7ab9541279413e7671f8b8c0801247c7f2769fadf15d402cb4709ec86dea"
+        }
+      },
+      "kane-evidence-packs/locked-a496216f.evidence": {
+        "pre_redaction_sha256": "c48088345e8e735215d361662048a88851426db26444fc4beaf030f7c4cb20d2",
+        "inner_files_redacted": {
+          "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/auteur/execution.json": "a6050be070fa698e57c517e2cca01d83f4fef5e7def497ebcc8eee64e229b123",
+          "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/logs/0-stability-ledger-draft.json": "cd50e6df5829299dc3c7bb4e58ec29e03ae14c01cc0b94a10dd13007cb171dbe",
+          "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/logs/runner-stderr.log": "033d815d596d0d79605a5deb4111b25e0f8333b0a9740cb1282c57d178cd4128",
+          "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/logs/tui.log": "32f7db42d3bc7c75fcbb717633bd267f1b8350d89b0bd95261031190e4124c69",
+          "tests/add-3-shirts-to-the-cart-verify-the-cart-b4775626/result.yaml": "95cde2948d0dc6bc02b6e0d5fd810b900edf4b63a354c8052666f01e497d85a9"
+        }
+      },
+      "locked.ndjson": {
+        "pre_redaction_sha256": "85364420c56afa0608bdcdd317233893da21e444c668392aa3bec3c5e35dbaaa"
+      },
+      "locked.run_end.json": {
+        "pre_redaction_sha256": "38ce9d39bb03e6a6d12875ab98ba24b4072adb568a073c69bf83d29fcf7fc408"
+      },
+      "locked.stderr": {
+        "pre_redaction_sha256": "46d0c46672e66d697360b0c214c81e022e242ebd24ae80ecc2c4f64caa8473b4"
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "type": "run_end",
+  "status": "passed",
+  "summary": "Completed checkout for the items that were already in the cart.\nVerified that the amount charged matched the total of the item prices.",
+  "one_liner": "completed checkout on the checkout page",
+  "final_state": {
+    "url": "http://localhost:3000/checkout",
+    "final_charged_amount_equals_item_prices_sum": "0"
+  },
+  "reason": "Objective completed",
+  "duration": 47.9,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "final_charged_amount_equals_item_prices_sum": {
+        "extracted_value": "0",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: '0' -> '0'; equals '0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 5,
+        "query": "the difference between the charged amount in the order receipt and the item-price total in the checkout summary",
+        "condition": "the final charged amount equals the sum of the item prices",
+        "human_description": "Comparing the charged amount with the item prices total",
+        "expected_value": "0",
+        "code_js": "parseFloat((el(13).textContent.match(/[\\d.]+/)||[])[0])-parseFloat((el(7).textContent.match(/[\\d.]+/)||[])[0])",
+        "wrapped_js": "(els) => {\n  const __m = {13: 0, 7: 1};\n  const el = (i) => els[__m[i]];\n  const __v = (parseFloat((el(13).textContent.match(/[\\d.]+/)||[])[0])-parseFloat((el(7).textContent.match(/[\\d.]+/)||[])[0]));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Charged: $\"i",
+          "internal:text=\"Order total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "final_charged_amount_equals_item_prices_sum": {
+        "syntax": "{{final_charged_amount_equals_item_prices_sum}}",
+        "value": "0",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(passed) completed checkout on the checkout page"
+  },
+  "credits_consumed": 20.244590000000002,
+  "session_dir": "~/.testmuai/kaneai/sessions/ed34e3b2-642d-4e36-aa53-3e1aaafab3da",
+  "run_dir": "~/.testmuai/kaneai/sessions/ed34e3b2-642d-4e36-aa53-3e1aaafab3da/runs/0",
+  "result_code": 100,
+  "reason_code": "success.complete",
+  "per_flow_metadata": [
+    {
+      "result_code": "100",
+      "reason_code": "success.complete",
+      "error_message": null,
+      "summary": "Completed checkout for the items that were already in the cart.\nVerified that the amount charged matched the total of the item prices.",
+      "one_liner": "completed checkout on the checkout page",
+      "credits_consumed": 20.244590000000002
+    }
+  ],
+  "run_id": "run-0",
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M877QKRWXNMDP2XC9PRDQMW5/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T16:56:26.745Z"
+}

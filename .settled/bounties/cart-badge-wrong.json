@@ -4,10 +4,45 @@
   "reward": 50,
   "currency": "USDC",
   "status": "open",
-  "fingerprint": "0ad2826969a0880a",
-  "locked_flow": "Add 3 shirts to the cart. Verify the cart badge shows exactly 3. Then open the cart and verify the charged total matches the sum of the items.",
-  "guard_flow": "Complete checkout with the items currently in the cart. Verify the final charged amount equals the sum of the item prices.",
+  "flow_version": 2,
+  "fingerprint": {
+    "algorithm": "sha256",
+    "scheme": "settled-fp-v2",
+    "locked": "56506e805acea56c28b231360bd08628437f4b0d77925cc5ddb86bc4e7773e6c",
+    "guard": "9548f70e56312f4fcfce0e88f51f493a698577522be3cda00475bf6a5d463cf2",
+    "combined": "d49fc25d2bb5d21963390c5be5dd2682864c1448da3ac593cfd09e607e45890f"
+  },
+  "locked_flow": "Open http://localhost:3000/cart. If the cart lists any items, click \"Empty cart\". Verify the cart shows \"Cart is empty\" and the header cart badge shows 0.\nGo to http://localhost:3000/ and click the \"Add shirt to cart\" button exactly 3 times in total, one click after another. Do not repeat, retry, or add clicks based on the cart badge or any other page state; the badge must never be used as a loop or stop condition.\nWithout reloading or leaving the page, verify the header cart badge shows exactly 3. If it shows any other number, the test fails.\nOpen the cart page. Verify the Settled Tee row shows a quantity of exactly 3.\nVerify the cart total is exactly $54.00.",
+  "guard_flow": "In this fresh, independent browser session, open http://localhost:3000/cart. If the cart lists any items, click \"Empty cart\". Verify the cart shows \"Cart is empty\".\nGo to http://localhost:3000/ and click the \"Add shirt to cart\" button exactly 3 times in total. Do not add clicks based on the cart badge or any other page state.\nOpen the cart page. Verify the Settled Tee row shows a quantity of exactly 3 and the cart total is exactly $54.00. If the cart is empty or the quantity is not 3, the test fails.\nClick Checkout. Verify the checkout summary lists 3 × Settled Tee and the order total is exactly $54.00. If the checkout page shows \"Cart is empty\", the test fails.\nClick \"Place order\". Verify the order confirmation shows a charged amount of exactly $54.00. A charged amount of $0.00, or any amount other than $54.00, fails the test.",
   "demo_url": "http://localhost:3000",
   "created_at": "2026-11-24T00:00:00Z",
+  "revised_at": "2026-11-24T00:00:00Z",
+  "revision_note": "v1 flows false-passed against the buggy shop (badge used as loop condition; empty-cart checkout). Revised by maintainer before activation.",
+  "activation": {
+    "rule": "Bounty may move from draft to open only after the unfixed demo shop makes BOTH flows fail for the planted bug they target: locked = badge shows 2 after exactly 3 clicks; guard = charged $60.00 instead of $54.00 for 3 shirts.",
+    "baseline_run": "evidence/cart-badge-wrong/20261124T171620Z",
+    "locked_detects_bug": {
+      "verdict": "failed",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+      "observed": "exactly 3 Add-shirt clicks (steps 6-8), header badge = 2, expected 3",
+      "credits": 31.9253,
+      "kane_session": "~/.testmuai/kaneai/sessions/36898415-39d5-457d-a7f2-6f0257607896",
+      "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M878Y306RMAFBVJ3VD8XHB7Y/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page"
+    },
+    "guard_detects_bug": {
+      "verdict": "failed",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "reason": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
+      "observed": "cart qty 3, cart total $54.00, checkout order total $54.00, Charged $60.00 (expected $54.00)",
+      "credits": 62.21719499999999,
+      "kane_session": "~/.testmuai/kaneai/sessions/c455810f-9555-4f3f-9310-42268040143d",
+      "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M8791BXNSY6XQB85QVH4501P/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page"
+    },
+    "activated_at": "2026-11-24T17:22:17.777Z"
+  },
+  "regression_evidence": [
+    "evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z"
+  ],
   "proof_run_id": null
 }

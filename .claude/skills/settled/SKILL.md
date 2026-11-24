@@ -22,7 +22,7 @@ If not authenticated, tell the user to run `kane-cli login --oauth` once.
 When the user says "claim bounty" or you are given a bounty folder:
 
 1. Read `.settled/bounties/<bounty-id>.json` and the locked flow file(s).
-2. Confirm the fingerprint matches the current flow text: run `node scripts/fingerprint.js <bounty-id>` (first 16 hex chars of SHA-256 over the trimmed locked flow text). If it exits non-zero, refuse and report the mismatch.
+2. Confirm the fingerprint matches the current flow text: run `node scripts/fingerprint.js <bounty-id>` (full SHA-256 over both the locked and guard flow text, plus a combined hash). If it exits non-zero, refuse and report the mismatch.
 3. Start the demo app if needed (`cd demo-shop && npm start`, serves http://localhost:3000) and note the local URL.
 4. For the locked flow (and any guard flow), run:
 

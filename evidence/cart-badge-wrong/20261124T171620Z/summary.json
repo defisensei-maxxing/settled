@@ -1,0 +1,129 @@
+{
+  "locked": {
+    "kind": "locked",
+    "status": "failed",
+    "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+    "reason_code": "assertion_error.confirmed_product_bug",
+    "summary": "The shop did not reliably keep all three add-to-cart actions when they were clicked one after another. The badge shown after the click sequence was below the required count.\nInvestigate cart state updates during back-to-back Add shirt to cart clicks. Each accepted click should add one Settled Tee and update the badge without dropping earlier clicks.\nevidence: objective_contradiction: Checkpoint assertion failed: \"the header cart badge shows exactly 3\"\nevidence: objective_contradiction: click: Clicking Add shirt to cart button",
+    "final_state": {},
+    "observed": {
+      "cart_lists_items": {
+        "extracted": "false",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL"
+      },
+      "cart_empty_message": {
+        "extracted": "true",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS"
+      },
+      "header_cart_badge_zero": {
+        "extracted": "0",
+        "expected": "0",
+        "operator": "equals",
+        "reasoning": "value: '0' -> '0'; equals '0' -> PASS"
+      },
+      "header_cart_badge_other_number": {
+        "extracted": "2",
+        "expected": "3",
+        "operator": "not_equals",
+        "reasoning": "value: '2' -> '2' after ['strip']; not_equals '3' -> PASS"
+      },
+      "header_cart_badge_three": {
+        "extracted": "2",
+        "expected": "3",
+        "operator": "equals",
+        "reasoning": "value: '2' -> '2' after ['strip']; equals '3' -> FAIL"
+      }
+    },
+    "error": [
+      "Checkpoint assertion failed: \"the header cart badge shows exactly 3\""
+    ],
+    "duration": 95,
+    "credits_consumed": 31.9253,
+    "session_dir": "~/.testmuai/kaneai/sessions/36898415-39d5-457d-a7f2-6f0257607896",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M878Y306RMAFBVJ3VD8XHB7Y/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+    "ts": "2026-11-24T17:18:09.439Z"
+  },
+  "total_credits": 94.142495,
+  "guard": {
+    "kind": "guard",
+    "status": "failed",
+    "reason": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
+    "reason_code": "assertion_error.confirmed_product_bug",
+    "summary": "The order total and the amount reported as charged do not match. The checkout listed three Settled Tees for $54.00, then the completed order showed $60.00 instead.\nInvestigate the checkout charge calculation and ensure the confirmed charged amount uses the same $54.00 total shown in the checkout summary.\nevidence: objective_contradiction: Charged: $60.00\nevidence: objective_contradiction: Order total: $54.00",
+    "final_state": {},
+    "observed": {
+      "cart_items_listed": {
+        "extracted": "false",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL"
+      },
+      "cart_empty_message_visible": {
+        "extracted": "true",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS"
+      },
+      "settled_tee_quantity_check": {
+        "extracted": "3",
+        "expected": "3",
+        "operator": "equals",
+        "reasoning": "value: '3' -> '3' after ['strip']; equals '3' -> PASS"
+      },
+      "cart_total_check": {
+        "extracted": "$54.00",
+        "expected": "$54.00",
+        "operator": "equals",
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS"
+      },
+      "cart_empty_check": {
+        "extracted": "true",
+        "expected": "false",
+        "operator": "equals",
+        "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL"
+      },
+      "quantity_not_3_check": {
+        "extracted": "3",
+        "expected": "3",
+        "operator": "not_equals",
+        "reasoning": "value: '3' -> '3' after ['strip']; not_equals '3' -> FAIL"
+      },
+      "checkout_summary_settled_tee_listing": {
+        "extracted": "true",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS"
+      },
+      "checkout_order_total": {
+        "extracted": "$54.00",
+        "expected": "$54.00",
+        "operator": "equals",
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS"
+      },
+      "checkout_cart_empty_message": {
+        "extracted": "false",
+        "expected": "true",
+        "operator": "equals",
+        "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL"
+      },
+      "order_confirmation_charged_amount": {
+        "extracted": "$60.00",
+        "expected": "$54.00",
+        "operator": "equals",
+        "reasoning": "value: '$60.00' -> '$60.00' after ['strip']; equals '$54.00' -> FAIL"
+      }
+    },
+    "error": [
+      "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\""
+    ],
+    "duration": 191.4,
+    "credits_consumed": 62.21719499999999,
+    "session_dir": "~/.testmuai/kaneai/sessions/c455810f-9555-4f3f-9310-42268040143d",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M8791BXNSY6XQB85QVH4501P/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+    "ts": "2026-11-24T17:21:31.262Z"
+  }
+}

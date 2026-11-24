@@ -1,0 +1,96 @@
+{
+  "type": "run_end",
+  "status": "passed",
+  "summary": "Added three shirts to the cart as requested.\nConfirmed that the cart indicator showed 3 items.\nOpened the cart page and confirmed that the total matched the combined item line totals.",
+  "one_liner": "added three shirts and opened the cart on localhost",
+  "final_state": {
+    "url": "http://localhost:3000/cart",
+    "cart_badge_count": "3",
+    "total_matches_item_sum": "true"
+  },
+  "reason": "Objective completed",
+  "duration": 79.2,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_badge_count_check": {
+        "extracted_value": "Cart 3",
+        "operator": "equals",
+        "transforms": [
+          "extract_number"
+        ],
+        "json_path": null,
+        "reasoning": "value: 'Cart 3' -> '3' after ['extract_number']; equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 3,
+        "query": "the cart item count displayed in the cart link badge in the header",
+        "condition": "the cart badge shows exactly 3.",
+        "human_description": "Reading the cart badge count",
+        "expected_value": "3",
+        "code_js": "el(3).innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "charged_total_matches_items_sum": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 7,
+        "query": "whether the total amount in the cart summary equals the sum of the line totals in the cart table",
+        "condition": "the charged total matches the sum of the items.",
+        "human_description": "Comparing the cart total with the sum of item line totals",
+        "expected_value": "true",
+        "code_js": "(() => { const table = el(4).querySelector('table'); const sum = Array.from(table.querySelectorAll('tbody tr')).reduce((total, row) => total + Number(row.cells[3].innerText.replace(/[^0-9.-]/g, '')), 0); const totalText = Array.from(el(4).querySelectorAll('p')).map(p => p.innerText.trim()).find(text => text.startsWith('Total:')); const charged = Number((totalText || '').replace(/[^0-9.-]/g, '')); return charged === sum; })()",
+        "wrapped_js": "(els) => {\n  const __m = {4: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((() => { const table = el(4).querySelector('table'); const sum = Array.from(table.querySelectorAll('tbody tr')).reduce((total, row) => total + Number(row.cells[3].innerText.replace(/[^0-9.-]/g, '')), 0); const totalText = Array.from(el(4).querySelectorAll('p')).map(p => p.innerText.trim()).find(text => text.startsWith('Total:')); const charged = Number((totalText || '').replace(/[^0-9.-]/g, '')); return charged === sum; })());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Your cart ItemPriceQtyLine\"i"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_badge_count_check": {
+        "syntax": "{{cart_badge_count_check}}",
+        "value": "Cart 3",
+        "type": "memory",
+        "secret": false
+      },
+      "charged_total_matches_items_sum": {
+        "syntax": "{{charged_total_matches_items_sum}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(passed) added three shirts and opened the cart on localhost"
+  },
+  "credits_consumed": 25.665459999999996,
+  "session_dir": "~/.testmuai/kaneai/sessions/a496216f-80c5-4f37-a4f8-fa19f46de10f",
+  "run_dir": "~/.testmuai/kaneai/sessions/a496216f-80c5-4f37-a4f8-fa19f46de10f/runs/0",
+  "result_code": 100,
+  "reason_code": "success.complete",
+  "per_flow_metadata": [
+    {
+      "result_code": "100",
+      "reason_code": "success.complete",
+      "error_message": null,
+      "summary": "Added three shirts to the cart as requested.\nConfirmed that the cart indicator showed 3 items.\nOpened the cart page and confirmed that the total matched the combined item line totals.",
+      "one_liner": "added three shirts and opened the cart on localhost",
+      "credits_consumed": 25.665459999999996
+    }
+  ],
+  "run_id": "run-0",
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M877KN3EMCP900HMKEPAGGNG/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T16:55:21.217Z"
+}

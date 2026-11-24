@@ -1,0 +1,210 @@
+{
+  "type": "run_end",
+  "status": "failed",
+  "summary": "The shop did not reliably keep all three add-to-cart actions when they were clicked one after another. The badge shown after the click sequence was below the required count.\nInvestigate cart state updates during back-to-back Add shirt to cart clicks. Each accepted click should add one Settled Tee and update the badge without dropping earlier clicks.\nevidence: objective_contradiction: Checkpoint assertion failed: \"the header cart badge shows exactly 3\"\nevidence: objective_contradiction: click: Clicking Add shirt to cart button",
+  "one_liner": "Three Add shirt to cart clicks were made, but the cart badge did not reach 3.",
+  "final_state": {},
+  "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+  "duration": 95,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_lists_items": {
+        "extracted_value": "false",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "whether product cart items are present in the cart table",
+        "condition": "the cart lists any items",
+        "human_description": "Checking whether the cart lists items",
+        "expected_value": "true",
+        "subject": "cart items",
+        "must_be": "present",
+        "code_js": "Array.from(el(6).querySelectorAll('tbody tr')).some(row => row.querySelectorAll('td').length > 1)",
+        "wrapped_js": "(els) => {\n  const __m = {6: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (Array.from(el(6).querySelectorAll('tbody tr')).some(row => row.querySelectorAll('td').length > 1));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"ItemPriceQtyLine totalCart is\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "cart_empty_message": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 4,
+        "query": "whether the cart message \"Cart is empty\" is present in the cart table",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the empty-cart message is present",
+        "expected_value": "true",
+        "subject": "the cart message \"Cart is empty\"",
+        "must_be": "present",
+        "code_js": "el(15).innerText.trim() === 'Cart is empty'",
+        "wrapped_js": "(els) => {\n  const __m = {15: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(15).innerText.trim() === 'Cart is empty');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"Cart is empty\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_zero": {
+        "extracted_value": "0",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: '0' -> '0'; equals '0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 4,
+        "query": "the numeric cart item count in the header cart link",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0",
+        "code_js": "el(3).innerText.trim().match(/\\d+/)?.[0] ?? null",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.trim().match(/\\d+/)?.[0] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_other_number": {
+        "extracted_value": "2",
+        "operator": "not_equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '2' -> '2' after ['strip']; not_equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 10,
+        "query": "the numeric cart item badge in the header cart link",
+        "condition": "the header cart badge shows any other number",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "3",
+        "code_js": "el(3).innerText.trim().match(/\\d+/)?.[0] ?? null",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.trim().match(/\\d+/)?.[0] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_three": {
+        "extracted_value": "2",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '2' -> '2' after ['strip']; equals '3' -> FAIL",
+        "analyzer_type": "textual_visual",
+        "step": 10,
+        "query": "the numeric cart item badge in the header cart link",
+        "condition": "the header cart badge shows exactly 3",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "3",
+        "code_js": "el(3).innerText.trim().match(/\\d+/)?.[0] ?? null",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.trim().match(/\\d+/)?.[0] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_lists_items": {
+        "syntax": "{{cart_lists_items}}",
+        "value": "false",
+        "type": "memory",
+        "secret": false
+      },
+      "cart_empty_message": {
+        "syntax": "{{cart_empty_message}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_zero": {
+        "syntax": "{{header_cart_badge_zero}}",
+        "value": "0",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_other_number": {
+        "syntax": "{{header_cart_badge_other_number}}",
+        "value": "2",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_three": {
+        "syntax": "{{header_cart_badge_three}}",
+        "value": "2",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(failed) Three Add shirt to cart clicks were made, but the cart badge did not reach 3."
+  },
+  "credits_consumed": 31.9253,
+  "session_dir": "~/.testmuai/kaneai/sessions/36898415-39d5-457d-a7f2-6f0257607896",
+  "run_dir": "~/.testmuai/kaneai/sessions/36898415-39d5-457d-a7f2-6f0257607896/runs/0",
+  "result_code": 740,
+  "reason_code": "assertion_error.confirmed_product_bug",
+  "per_flow_metadata": [
+    {
+      "result_code": "740",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "error_message": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+      "summary": "The shop did not reliably keep all three add-to-cart actions when they were clicked one after another. The badge shown after the click sequence was below the required count.\nInvestigate cart state updates during back-to-back Add shirt to cart clicks. Each accepted click should add one Settled Tee and update the badge without dropping earlier clicks.\nevidence: objective_contradiction: Checkpoint assertion failed: \"the header cart badge shows exactly 3\"\nevidence: objective_contradiction: click: Clicking Add shirt to cart button",
+      "one_liner": "Three Add shirt to cart clicks were made, but the cart badge did not reach 3.",
+      "credits_consumed": 31.9253
+    }
+  ],
+  "run_id": "run-0",
+  "verdict": {
+    "confirmed": true,
+    "status": "failed",
+    "family": "application_issue",
+    "category": "functional_defect",
+    "category_proposal": "",
+    "severity": "major",
+    "root_cause": "The shop did not reliably keep all three add-to-cart actions when they were clicked one after another. The badge shown after the click sequence was below the required count.",
+    "agent_fault_assessment": "The agent followed the required sequence: it clicked the specified Add shirt to cart button exactly three times in steps 0-7, 0-8, and 0-9, without using the cart badge to decide whether to click again. The agent did not cause the missing item updates; the application failed to apply every requested add action.",
+    "bug_title": "Rapid Add to cart clicks lose cart items",
+    "signals": [
+      {
+        "step": "0-10",
+        "kind": "objective_contradiction",
+        "excerpt": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\""
+      },
+      {
+        "step": "0-9",
+        "kind": "objective_contradiction",
+        "excerpt": "click: Clicking Add shirt to cart button"
+      }
+    ],
+    "confidence": 0.91,
+    "suggestion": "Investigate cart state updates during back-to-back Add shirt to cart clicks. Each accepted click should add one Settled Tee and update the badge without dropping earlier clicks.",
+    "one_liner": "Three Add shirt to cart clicks were made, but the cart badge did not reach 3.",
+    "relevant_steps": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "culprit_step": "0-10",
+    "credits_consumed": 4.942099999999999,
+    "known_bug_id": "",
+    "category_name": "",
+    "mode": "terminal"
+  },
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M878Y306RMAFBVJ3VD8XHB7Y/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T17:18:09.439Z"
+}

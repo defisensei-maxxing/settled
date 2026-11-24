@@ -1,0 +1,13 @@
+{
+  "id": "cart-badge-wrong",
+  "title": "Cart badge shows wrong count",
+  "reward": 50,
+  "currency": "USDC",
+  "status": "open",
+  "fingerprint": "0ad2826969a0880a",
+  "locked_flow": "Add 3 shirts to the cart. Verify the cart badge shows exactly 3. Then open the cart and verify the charged total matches the sum of the items.",
+  "guard_flow": "Complete checkout with the items currently in the cart. Verify the final charged amount equals the sum of the item prices.",
+  "demo_url": "http://localhost:3000",
+  "created_at": "2026-11-24T00:00:00Z",
+  "proof_run_id": null
+}

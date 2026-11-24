@@ -19,10 +19,14 @@ The shop ships with two planted bugs:
 
 ## Fingerprint
 
-A bounty's `fingerprint` is the first 16 hex chars of SHA-256 over the locked flow text, trimmed. It pins the bounty to the exact flow the maintainer funded, so nobody can soften the test after the fact.
+A bounty's `fingerprint` (scheme `settled-fp-v2`) is a set of full SHA-256 hashes: one over the trimmed locked flow, one over the trimmed guard flow, and `combined = sha256("settled-fp-v2\n" + id + "\n" + lockedHash + "\n" + guardHash)`. The verifier also checks that the flow text in the bounty JSON is byte-identical to the `.md` files. This pins the bounty to both flows the maintainer funded, so nobody can soften either test after the fact.
+
+A bounty stays `draft` until a baseline run against the unfixed shop shows both flows fail for their planted bug. See `evidence/<id>/regression/` for why: the v1 flows false-passed.
 
 ```bash
-node scripts/fingerprint.js cart-badge-wrong
+node scripts/fingerprint.js cart-badge-wrong           # verify (exit 1 on mismatch)
+node scripts/fingerprint.js cart-badge-wrong --write   # maintainer only: re-pin after editing flows
+scripts/run-flows.sh cart-badge-wrong                  # verify, start shop, run both flows via Kane
 ```
 
 ## Layout
