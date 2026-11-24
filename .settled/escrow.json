@@ -10,9 +10,19 @@
       "held_ref": "5d418d208c33e122b1050f1ab584213f",
       "to": "maintainer",
       "refunded_ref": "10a5f0c7f8d86593ceca0c69d33121c5"
+    },
+    "cart-badge-wrong-v3": {
+      "amount": 50,
+      "currency": "USDC",
+      "from": "maintainer",
+      "state": "released",
+      "held_ref": "fe847326442346645d499a06ba5121d0",
+      "to": "demo-solver",
+      "released_ref": "f705d4fd541a90fd27ca6802aa741a1d"
     }
   },
   "balances": {
-    "maintainer:USDC": 50
+    "maintainer:USDC": 50,
+    "demo-solver:USDC": 50
   }
 }

@@ -3,7 +3,7 @@
   "title": "Cart badge shows wrong count",
   "reward": 50,
   "currency": "USDC",
-  "status": "draft",
+  "status": "paid",
   "flow_version": 3,
   "supersedes": "cart-badge-wrong",
   "fingerprint": {
@@ -25,7 +25,48 @@
   },
   "activation": {
     "rule": "Bounty may move from draft to open only when the unfixed demo shop makes BOTH flows fail as assertion_error.confirmed_product_bug on their declared target check (baseline_expectations).",
-    "baseline_run": null
+    "baseline_run": "evidence/cart-badge-wrong-v3/baseline-20261124T181329Z",
+    "activated_at": "2026-11-24T18:17:08.907Z",
+    "locked_detects_bug": {
+      "verdict": "failed",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+      "credits": 27.377788
+    },
+    "guard_detects_bug": {
+      "verdict": "failed",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "reason": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
+      "credits": 43.065324999999994
+    }
   },
-  "proof_run_id": null
+  "proof_run_id": "0c8e41002d6d9d6f865dbe2e6077224e",
+  "locked": {
+    "at": "2026-11-24T18:17:08.907Z",
+    "by": "maintainer",
+    "fingerprint_combined": "c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa",
+    "baseline_dir": "evidence/cart-badge-wrong-v3/baseline-20261124T181329Z",
+    "legacy_baseline": false,
+    "ledger_seq": 1
+  },
+  "claim": {
+    "solver": "demo-solver",
+    "claim_id": "16a962b66c4ab53e037bbcd87388490e",
+    "at": "2026-11-24T18:17:22.973Z",
+    "ledger_seq": 2
+  },
+  "last_verification": {
+    "result": "passed",
+    "at": "2026-11-24T18:21:30.681Z",
+    "evidence_dir": "evidence/cart-badge-wrong-v3/verify-20261124T181728Z-0c8e4100",
+    "ledger_seq": 3
+  },
+  "payout": {
+    "to": "demo-solver",
+    "amount": 50,
+    "currency": "USDC",
+    "at": "2026-11-24T18:22:01.536Z",
+    "simulated": true,
+    "ledger_seq": 4
+  }
 }

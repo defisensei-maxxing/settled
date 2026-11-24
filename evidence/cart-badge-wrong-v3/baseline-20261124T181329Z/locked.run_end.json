@@ -1,0 +1,154 @@
+{
+  "type": "run_end",
+  "status": "failed",
+  "summary": "The shop did not keep every add-to-cart action when the three clicks were made one after another, leaving one shirt out of the cart.\nMake each add-to-cart action update the cart reliably before a following click can replace or discard it; then retest three immediate clicks.\nevidence: objective_contradiction: check FAILED: the header cart badge shows exactly 3 — expected: 3 | observed: {{header_cart_badge_three_check}}",
+  "one_liner": "Three requested add-to-cart clicks were completed, but the cart badge showed 2 instead of 3.",
+  "final_state": {},
+  "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+  "duration": 77.1,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_empty_message_check": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "whether the \"Cart is empty\" message is present in the cart table",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the cart empty message is present",
+        "expected_value": "true",
+        "subject": "\"Cart is empty\"",
+        "must_be": "present",
+        "code_js": "el(15).innerText.trim() === 'Cart is empty'",
+        "wrapped_js": "(els) => {\n  const __m = {15: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(15).innerText.trim() === 'Cart is empty');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"Cart is empty\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_zero_check": {
+        "extracted_value": "Cart 0",
+        "operator": "equals",
+        "transforms": [
+          "extract_number"
+        ],
+        "json_path": null,
+        "reasoning": "value: 'Cart 0' -> '0' after ['extract_number']; equals '0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "the item count shown in the header cart link badge",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0",
+        "code_js": "el(3).innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_three_check": {
+        "extracted_value": "2",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '2' -> '2' after ['strip']; equals '3' -> FAIL",
+        "analyzer_type": "textual_visual",
+        "step": 8,
+        "query": "the item count text in the header Cart link badge",
+        "condition": "the header cart badge shows exactly 3",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "3",
+        "code_js": "el(3).querySelector('#cart-badge').innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).querySelector('#cart-badge').innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_empty_message_check": {
+        "syntax": "{{cart_empty_message_check}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_zero_check": {
+        "syntax": "{{header_cart_badge_zero_check}}",
+        "value": "Cart 0",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_three_check": {
+        "syntax": "{{header_cart_badge_three_check}}",
+        "value": "2",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(failed) Three requested add-to-cart clicks were completed, but the cart badge showed 2 instead of 3."
+  },
+  "credits_consumed": 27.377788,
+  "session_dir": "~/.testmuai/kaneai/sessions/4eda04ad-534a-41dd-8d14-28912bdecfce",
+  "run_dir": "~/.testmuai/kaneai/sessions/4eda04ad-534a-41dd-8d14-28912bdecfce/runs/0",
+  "result_code": 740,
+  "reason_code": "assertion_error.confirmed_product_bug",
+  "per_flow_metadata": [
+    {
+      "result_code": "740",
+      "reason_code": "assertion_error.confirmed_product_bug",
+      "error_message": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
+      "summary": "The shop did not keep every add-to-cart action when the three clicks were made one after another, leaving one shirt out of the cart.\nMake each add-to-cart action update the cart reliably before a following click can replace or discard it; then retest three immediate clicks.\nevidence: objective_contradiction: check FAILED: the header cart badge shows exactly 3 — expected: 3 | observed: {{header_cart_badge_three_check}}",
+      "one_liner": "Three requested add-to-cart clicks were completed, but the cart badge showed 2 instead of 3.",
+      "credits_consumed": 27.377788
+    }
+  ],
+  "run_id": "run-0",
+  "verdict": {
+    "confirmed": true,
+    "status": "failed",
+    "family": "application_issue",
+    "category": "functional_defect",
+    "category_proposal": "",
+    "severity": "major",
+    "root_cause": "The shop did not keep every add-to-cart action when the three clicks were made one after another, leaving one shirt out of the cart.",
+    "agent_fault_assessment": "The agent followed the required interaction: the evidence records exactly three successful clicks on the Settled Tee add button at steps 0-5, 0-6, and 0-7, with no retry or badge-driven extra click. The final screenshot shows the badge at 2 after that sequence, so the agent's actions did not cause the short count.",
+    "bug_title": "Rapid add-to-cart clicks lose one Settled Tee",
+    "signals": [
+      {
+        "step": "0-9",
+        "kind": "objective_contradiction",
+        "excerpt": "check FAILED: the header cart badge shows exactly 3 — expected: 3 | observed: {{header_cart_badge_three_check}}"
+      }
+    ],
+    "confidence": 0.98,
+    "suggestion": "Make each add-to-cart action update the cart reliably before a following click can replace or discard it; then retest three immediate clicks.",
+    "one_liner": "Three requested add-to-cart clicks were completed, but the cart badge showed 2 instead of 3.",
+    "relevant_steps": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "culprit_step": "0-9",
+    "credits_consumed": 4.492,
+    "known_bug_id": "BUG-1",
+    "category_name": "",
+    "mode": "terminal"
+  },
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M87C6NTY61CGVR05MQF58GPT/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T18:14:57.805Z"
+}
