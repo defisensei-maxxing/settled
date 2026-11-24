@@ -1,0 +1,64 @@
+{
+  "dir": "/Users/st007/settled/evidence/cart-badge-wrong/verify-20261124T173707Z-9237c2de",
+  "redacted_at": "2026-11-24T17:42:17.188Z",
+  "rules": [
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+    "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+    "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+    "(^\\s*(?:user_id|org_id|account_id):\\s*)(['\"]?)\\d+\\2",
+    "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+    "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+    "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+    "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+    "\\/Users\\/[^/\"'\\s]+\\/",
+    "\\/home\\/[^/\"'\\s]+\\/"
+  ],
+  "files": {
+    "guard.evidence": {
+      "pre_redaction_sha256": "26dfcd3e6d02b783db793ab1da643a6563a11a545d10459444382c8a31c62621",
+      "inner_files_redacted": {
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/auteur/execution.json": "b8b5500ece8ff49e6e72a2c8ce894b6e09b6906be8bd3b0492b925354b8c2144",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/0-stability-ledger-draft.json": "e9174e4d837bfeb9074b000982d8071c8b15566a4393a627552daf39b6002d04",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/1-run.log": "cf31fcc049db4f4c6ecc8cc510ac747c51c0d0cc62d1760ce932ffc158d6b054",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/1-stability-ledger-draft.json": "0c03707a780ba0341a51710c91bbd75edbd2bf1908e9b1d7147bde4c9d87e2a4",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/1-stability-ledger.ndjson": "86b9a161d4d26551b7602179ae6cec246292bf7507095d188183a40e2a14d45c",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/runner-stderr.log": "53b02e15dc65ed68928ad4ff92ee442c58af2473e441463b63be40b27dd083c3",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/logs/tui.log": "1bdcc048f339a1f68b0393b1262698ca782b05a0f7d6cb5d50e34134c02d8d0c",
+        "tests/in-this-fresh-independent-browser-sessio-0d6dd7a3/result.yaml": "09a3d43fa7bf5279bea495f73f01b19a6451974d5556e04113aeec2eeaa4d5ed"
+      }
+    },
+    "guard.ndjson": {
+      "pre_redaction_sha256": "b07173c7cc6813e51ec5f36f12d48641c9ebcd8108e6c1b2dbfd2b6b7babd659"
+    },
+    "guard.run_end.json": {
+      "pre_redaction_sha256": "416fd8e393dd6140f0e6e5c44235b62c5aca7187e024a5a1a80b71a4b207e4bf"
+    },
+    "guard.stderr": {
+      "pre_redaction_sha256": "cb66c09d30335796bcb00129b74e288c51a9d704c46cf3c85b2acb620544d803"
+    },
+    "locked.evidence": {
+      "pre_redaction_sha256": "16944489987b4fedc29b968f0cfba78f26689f009ad253b22987ebee59e2318d",
+      "inner_files_redacted": {
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/auteur/execution.json": "adaa988a70fe1d5d418512e673992b8c62433760225dfa7d91a951774b1251bf",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/0-stability-ledger-draft.json": "ccc9822a305c5bd5a9ed9ea9214f100df5df8dc21dc23484ad0c9f272456dff1",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/1-stability-ledger-draft.json": "4dd1077e765bfff9178a283e81fec09edd6acff36d0dea8fc5bfff7afe26664a",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/1-stability-ledger.ndjson": "34b1d9f62ade8550d348bb7649c9535f9484539d5a8df421c32034c0eef61729",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/2-stability-ledger-draft.json": "4a7a3ebd4250d238831e47923f2a8cebca84c6a8d8a9a124e1e3e519d3b3192c",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/2-stability-ledger.ndjson": "e49ec2389eb9b4d0591e24d920537a4d5f28035c594cb9ed9dea47b8bd96c446",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/runner-stderr.log": "7d2049b13a478b39bb32c107e2c6c9a335a40a0d3ae6e00aec8300fb608ae1b1",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/logs/tui.log": "257b1a5cb785cff8a30d53b8ea0c738efb12c95bc17e9a0bcbcbe5fab54551ef",
+        "tests/open-http-localhost-3000-cart-if-the-car-578031f1/result.yaml": "d043963e88c351e07a7be148ee95f5c88761265707d23db932e45513acbdb9d7"
+      }
+    },
+    "locked.ndjson": {
+      "pre_redaction_sha256": "af854f2bf79a4f78a7c2ebe0a3aaaf0d6da4e1ae9af453390e24f727a94f2bb6"
+    },
+    "locked.run_end.json": {
+      "pre_redaction_sha256": "42f3f76a24bab6c88ccf406e73a5103863b11bd2c43def68d1dad2d0436d9612"
+    },
+    "locked.stderr": {
+      "pre_redaction_sha256": "bfa51f3c384f7d6c5f9b02d0b5da6a6da967bdc81df91f33d5e3d0d83d179862"
+    }
+  }
+}

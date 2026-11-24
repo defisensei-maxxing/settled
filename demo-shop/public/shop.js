@@ -11,12 +11,11 @@ function renderBadge(cart) {
 
 function addToCart(id) {
   const cart = loadCart();
-  // BUG (locked flow): badge is rendered from the cart *before* the new item is added,
-  // so it always lags one behind. Add 3 shirts -> badge shows 2.
-  renderBadge(cart);
   const line = cart.find((i) => i.id === id);
   if (line) line.qty += 1; else cart.push({ id, qty: 1 });
   saveCart(cart);
+  // Fixed (bounty cart-badge-wrong): render the badge after the item is added.
+  renderBadge(cart);
   const msg = document.getElementById("added-msg");
   if (msg) msg.textContent = "Added " + CATALOG[id].name;
 }
