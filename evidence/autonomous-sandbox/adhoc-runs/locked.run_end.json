@@ -1,0 +1,180 @@
+{
+  "type": "run_end",
+  "status": "passed",
+  "summary": "Opened the store with an empty cart and a cart count of 0.\nAdded the Settled Tee to the cart exactly three times in succession.\nOpened the cart page, where the Settled Tee quantity was 3 and the total was $54.00.",
+  "one_liner": "added three Settled Tees to the cart on the local store",
+  "final_state": {
+    "url": "http://localhost:3000/cart",
+    "header_cart_badge_count": "3",
+    "settled_tee_quantity": "3",
+    "cart_total": "$54.00"
+  },
+  "reason": "Objective completed",
+  "duration": 85,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_empty_message_check": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "whether the cart message \"Cart is empty\" is present in the cart table",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the cart empty message is present",
+        "expected_value": "true",
+        "subject": "the cart message \"Cart is empty\"",
+        "must_be": "present",
+        "code_js": "el(15).innerText.trim() === 'Cart is empty'",
+        "wrapped_js": "(els) => {\n  const __m = {15: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(15).innerText.trim() === 'Cart is empty');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"Cart is empty\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "initial_header_cart_badge_count": {
+        "extracted_value": "0",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '0' -> '0' after ['strip']; equals '0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "the numeric cart badge count in the header cart link",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0",
+        "code_js": "(el(3).innerText.match(/\\d+/) || [null])[0]",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(3).innerText.match(/\\d+/) || [null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_count": {
+        "extracted_value": "3",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '3' -> '3' after ['strip']; equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 8,
+        "query": "the item count in the cart badge within the header cart link",
+        "condition": "the header cart badge shows exactly 3",
+        "human_description": "Reading the item count from the header cart badge",
+        "expected_value": "3",
+        "code_js": "el(3).querySelector('#cart-badge')?.textContent.trim() ?? null",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).querySelector('#cart-badge')?.textContent.trim() ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "settled_tee_quantity": {
+        "extracted_value": "3",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '3' -> '3' after ['strip']; equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 12,
+        "query": "the quantity value in the Settled Tee cart row",
+        "condition": "the Settled Tee row shows a quantity of exactly 3",
+        "human_description": "Reading the Settled Tee quantity from the cart",
+        "expected_value": "3",
+        "code_js": "el(17).innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {17: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(17).innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"3\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "cart_total": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 12,
+        "query": "the cart total amount in the order summary",
+        "condition": "the cart total is exactly $54.00",
+        "human_description": "Reading the cart total from the order summary",
+        "expected_value": "$54.00",
+        "code_js": "el(19).innerText.replace(/^Total:\\s*/, '').trim()",
+        "wrapped_js": "(els) => {\n  const __m = {19: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(19).innerText.replace(/^Total:\\s*/, '').trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_empty_message_check": {
+        "syntax": "{{cart_empty_message_check}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "initial_header_cart_badge_count": {
+        "syntax": "{{initial_header_cart_badge_count}}",
+        "value": "0",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_count": {
+        "syntax": "{{header_cart_badge_count}}",
+        "value": "3",
+        "type": "memory",
+        "secret": false
+      },
+      "settled_tee_quantity": {
+        "syntax": "{{settled_tee_quantity}}",
+        "value": "3",
+        "type": "memory",
+        "secret": false
+      },
+      "cart_total": {
+        "syntax": "{{cart_total}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(passed) added three Settled Tees to the cart on the local store"
+  },
+  "credits_consumed": 34.903485,
+  "session_dir": "~/.testmuai/kaneai/sessions/9e1f0e1a-de4a-4e11-b50c-b872eb3a851f",
+  "run_dir": "~/.testmuai/kaneai/sessions/9e1f0e1a-de4a-4e11-b50c-b872eb3a851f/runs/0",
+  "result_code": 100,
+  "reason_code": "success.complete",
+  "per_flow_metadata": [
+    {
+      "result_code": "100",
+      "reason_code": "success.complete",
+      "error_message": null,
+      "summary": "Opened the store with an empty cart and a cart count of 0.\nAdded the Settled Tee to the cart exactly three times in succession.\nOpened the cart page, where the Settled Tee quantity was 3 and the total was $54.00.",
+      "one_liner": "added three Settled Tees to the cart on the local store",
+      "credits_consumed": 34.903485
+    }
+  ],
+  "run_id": "run-0",
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M87EB66KACDXYPD85SNK198E/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T18:52:38.297Z"
+}

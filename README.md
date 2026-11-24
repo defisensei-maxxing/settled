@@ -104,7 +104,7 @@ node cli/settled.js escrow
 
 ## What has actually been demonstrated
 
-Every row is a real `kane-cli` run (kane-cli 0.10.9, Chrome, headless) with sealed evidence in this repo.
+Every row is real `kane-cli` runs (kane-cli 0.10.9, Chrome, headless) with sealed evidence in this repo. Rows 1–8 are single runs; row 9 combines four.
 
 | # | Run | Code under test | Locked | Guard | Credits | Evidence |
 |---|---|---|---|---|---|---|
@@ -116,7 +116,8 @@ Every row is a real `kane-cli` run (kane-cli 0.10.9, Chrome, headless) with seal
 | 6 | v3 baseline | buggy | ⚠️ Kane browser crash | ❌ charged $60.00 | 57.26 | [baseline-…180739Z](evidence/cart-badge-wrong-v3/baseline-20261124T180739Z) |
 | 7 | v3 baseline | buggy | ❌ badge 2 | ❌ charged $60.00 → **posted** | 70.45 | [baseline-…181329Z](evidence/cart-badge-wrong-v3/baseline-20261124T181329Z) |
 | 8 | v3 verify | both fixed | ✅ badge 3, $54.00 | ✅ charged $54.00 → **paid** | 61.28 | [verify-…181728Z](evidence/cart-badge-wrong-v3/verify-20261124T181728Z-0c8e4100) |
-| | | | | | **543.22** | |
+| 9 | **Autonomous agent** (sandbox), 2 practice runs + verify | agent's own fix | ✅ badge 3, $54.00 | ✅ charged $54.00 → **paid** | 147.38 | [autonomous-sandbox](evidence/autonomous-sandbox/README.md) |
+| | | | | | **690.60** | |
 
 What these runs show:
 - **Kane's verdicts need guarding.** Run 1 passed buggy code: Kane looped until the lagging badge read 3 (4 shirts in the cart), and checked out an empty cart ($0 = $0). That is why flows use fixed click counts and absolute values, and why baselines must fail first.
@@ -124,7 +125,15 @@ What these runs show:
 - **Inconclusive runs never count** (runs 4–6). Kane agent errors, a setup checkpoint run out of order, and a browser crash were all rejected, never treated as passes or as bug evidence. Runs 4–5 led to flow v3 (unconditional setup) and to the tightened `post` rule. The original bounty was cancelled through the ledger and its escrow refunded.
 - **The full fix gets paid** (runs 7–8). v3 failed on target against the original buggy app (content hash `ddece88f…`), passed against the fixed app (`fc1965ae…`), and 50 USDC (simulated) was released to `demo-solver`. A replayed payout is refused.
 
-**Not demonstrated: autonomous repair by the Settled skill.** In this project the bug fixes were written by Claude Code under step-by-step human direction, and judged by `settled verify` with real Kane. The skill's autonomous loop (claim, read the flows, fix, iterate with `kane-cli`, hand off to `settled verify`) is written and kept in sync with the CLI. It has **not** been run end to end on its own. Demonstrating it needs a fresh bounty (`scripts/demo-sandbox.sh`) and roughly 150–300 Kane credits.
+- **Autonomous repair through the Settled skill** (run 9). In an isolated sandbox with answer hints removed, a fresh Claude Code agent got one instruction: *"Claim bounty cart-badge-wrong-v3 as solver `settled-agent` and solve it using the Settled skill."* It was limited to 3 attempts and 300 credits. It diagnosed both bugs, fixed them in **one attempt** (two single-line changes), confirmed each flow with Kane, and passed `settled verify` (both flows `success.complete`, Charged $54.00) for **147.38 credits**. The maintainer checked the sealed evidence and code hash, then released the simulated 50 USDC. Details: [evidence/autonomous-sandbox](evidence/autonomous-sandbox/README.md).
+
+**Limits of the autonomous result:**
+- Kane *confirmed* the agent's fix rather than steering it. The agent diagnosed from the bounty's recorded Kane failures plus reading the code, and no new run failed.
+- The bugs are easy: single-line, in a ~60-line app.
+- The agent is the same model family that fixed these bugs earlier in the project (with no access to that conversation), and its fix is identical.
+- Sandbox isolation was by instruction, not enforced.
+
+Runs 1–8 had their fixes written by Claude Code under step-by-step human direction.
 
 ## Trust model and limitations
 
@@ -134,6 +143,7 @@ What these runs show:
 - **Kane is probabilistic.** A Kane run can end in agent or browser errors (runs 4–6). Settled treats those as inconclusive, which keeps it safe but can cost credits. Flows are written to be unconditional and explicit for that reason.
 - **One port, one verifier at a time.** The flows hardcode `http://localhost:3000`.
 - **The legacy v2 baseline** was posted with `--accept-legacy-baseline`, because it predates the `candidate.json` code binding (the demo shop was unchanged since `6cdc886`). The v3 baseline is fully bound.
+- **Local account name in seven `REDACTIONS.json` files.** Before a later fix, the redactor wrote the evidence folder's absolute path, which includes the local macOS account name (not a credential). This includes the copied autonomous-sandbox verify folder. The files stay as they are, because the ledgers (the main ones, and the imported sandbox ledger for that folder) record each folder's seal hash (`sums_sha256`), and rewriting them would break the audit trail. New evidence records relative paths.
 
 ## Branches
 

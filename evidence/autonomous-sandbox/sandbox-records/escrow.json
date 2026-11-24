@@ -1,0 +1,57 @@
+{
+  "simulated": true,
+  "note": "Simulated escrow derived from .settled/ledger/*.ndjson. No real funds move. Do not edit; run `settled escrow`.",
+  "balances": {
+    "settled-agent:USDC": 50
+  },
+  "holds": {
+    "cart-badge-wrong-v3": {
+      "amount": 50,
+      "currency": "USDC",
+      "from": "maintainer",
+      "state": "released",
+      "posted_seq": 1,
+      "to": "settled-agent",
+      "settled_seq": 4
+    }
+  },
+  "conservation": {
+    "USDC": {
+      "deposited": 50,
+      "balances": 50,
+      "held": 0,
+      "ok": true
+    }
+  },
+  "negative_balances": [],
+  "ok": true,
+  "journal": [
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 1,
+      "at": "2026-11-24T18:49:25.234Z",
+      "kind": "deposit",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 1,
+      "at": "2026-11-24T18:49:25.234Z",
+      "kind": "hold",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 4,
+      "at": "2026-11-24T19:00:08.134Z",
+      "kind": "release",
+      "account": "settled-agent",
+      "amount": 50,
+      "currency": "USDC"
+    }
+  ]
+}

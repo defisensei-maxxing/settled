@@ -1,0 +1,235 @@
+{
+  "type": "run_end",
+  "status": "passed",
+  "summary": "You asked to add the Settled Tee to the cart three times, proceed through checkout, and place the order.\nThe cart started empty with a cart count of 0.\nThe Settled Tee was added exactly three times; the cart showed a quantity of 3 and a total of $54.00.\nAt checkout, the order summary listed 3 × Settled Tee with an order total of $54.00.\nThe order was placed successfully, and the confirmation showed a charge of $54.00.",
+  "one_liner": "placed an order for three Settled Tees on localhost:3000",
+  "final_state": {
+    "url": "http://localhost:3000/checkout",
+    "settled_tee_quantity": "3",
+    "cart_total": "$54.00",
+    "order_total": "$54.00",
+    "charged_amount": "$54.00"
+  },
+  "reason": "Objective completed",
+  "duration": 115.1,
+  "bifurcated": false,
+  "total_runs": 1,
+  "context": {
+    "memory": {
+      "cart_empty_message_visible": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "whether the \"Cart is empty\" message is present in the cart table",
+        "condition": "the cart shows \"Cart is empty\"",
+        "human_description": "Checking whether the cart empty message is present",
+        "expected_value": "true",
+        "subject": "\"Cart is empty\"",
+        "must_be": "present",
+        "code_js": "el(15).innerText.trim() === 'Cart is empty'",
+        "wrapped_js": "(els) => {\n  const __m = {15: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(15).innerText.trim() === 'Cart is empty');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"Cart is empty\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "header_cart_badge_count": {
+        "extracted_value": "0",
+        "operator": "equals",
+        "transforms": [
+          "string_to_float"
+        ],
+        "json_path": null,
+        "reasoning": "value: '0' -> '0.0' after ['string_to_float']; equals '0' -> '0.0' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 2,
+        "query": "the numeric cart badge count in the header cart link",
+        "condition": "the header cart badge shows 0",
+        "human_description": "Reading the header cart badge count",
+        "expected_value": "0",
+        "code_js": "el(3).innerText.match(/\\d+/)?.[0] ?? null",
+        "wrapped_js": "(els) => {\n  const __m = {3: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(3).innerText.match(/\\d+/)?.[0] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=link[name=\"Cart cart item count\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "settled_tee_quantity": {
+        "extracted_value": "3",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '3' -> '3' after ['strip']; equals '3' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 10,
+        "query": "the quantity cell for the Settled Tee row in the cart table",
+        "condition": "the Settled Tee row shows a quantity of exactly 3",
+        "human_description": "Reading the Settled Tee quantity from the cart table",
+        "expected_value": "3",
+        "code_js": "el(17).innerText.trim()",
+        "wrapped_js": "(els) => {\n  const __m = {17: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(17).innerText.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:role=cell[name=\"3\"i]"
+        ],
+        "needs_unit_conversion": false
+      },
+      "cart_total": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 10,
+        "query": "the cart total amount in the cart summary",
+        "condition": "the cart total is exactly $54.00",
+        "human_description": "Reading the cart total from the cart summary",
+        "expected_value": "$54.00",
+        "code_js": "(el(19).innerText.match(/\\$[\\d,]+\\.\\d{2}/)||[null])[0]",
+        "wrapped_js": "(els) => {\n  const __m = {19: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(19).innerText.match(/\\$[\\d,]+\\.\\d{2}/)||[null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "checkout_summary_settled_tee_visible": {
+        "extracted_value": "true",
+        "operator": "equals",
+        "transforms": [],
+        "json_path": null,
+        "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 14,
+        "query": "whether 3 × Settled Tee is present in the checkout summary item line",
+        "condition": "the checkout summary lists 3 × Settled Tee",
+        "human_description": "Checking whether the checkout summary includes Settled Tee",
+        "expected_value": "true",
+        "subject": "3 × Settled Tee",
+        "must_be": "present",
+        "code_js": "/3\\s*×\\s*Settled Tee/.test(el(6).innerText)",
+        "wrapped_js": "(els) => {\n  const __m = {6: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (/3\\s*×\\s*Settled Tee/.test(el(6).innerText));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"3 × Settled Tee @ $18.00 = $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "order_total": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 14,
+        "query": "the order total amount in the checkout summary",
+        "condition": "the order total is exactly $54.00",
+        "human_description": "Reading the order total from the checkout summary",
+        "expected_value": "$54.00",
+        "code_js": "(el(7).innerText.match(/\\$[\\d,]+\\.\\d{2}/)||[])[0]||null",
+        "wrapped_js": "(els) => {\n  const __m = {7: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(7).innerText.match(/\\$[\\d,]+\\.\\d{2}/)||[])[0]||null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Order total: $\"i"
+        ],
+        "needs_unit_conversion": false
+      },
+      "charged_amount": {
+        "extracted_value": "$54.00",
+        "operator": "equals",
+        "transforms": [
+          "strip"
+        ],
+        "json_path": null,
+        "reasoning": "value: '$54.00' -> '$54.00' after ['strip']; equals '$54.00' -> PASS",
+        "analyzer_type": "textual_visual",
+        "step": 17,
+        "query": "the charged amount in the order confirmation",
+        "condition": "the order confirmation shows a charged amount of exactly $54.00",
+        "human_description": "Reading the charged amount from the order confirmation",
+        "expected_value": "$54.00",
+        "code_js": "(el(13).innerText.match(/\\$[\\d.,]+/) || [null])[0]",
+        "wrapped_js": "(els) => {\n  const __m = {13: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(13).innerText.match(/\\$[\\d.,]+/) || [null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+        "locators": [
+          "internal:text=\"Charged: $\"i"
+        ],
+        "needs_unit_conversion": false
+      }
+    },
+    "variables": {
+      "cart_empty_message_visible": {
+        "syntax": "{{cart_empty_message_visible}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "header_cart_badge_count": {
+        "syntax": "{{header_cart_badge_count}}",
+        "value": "0",
+        "type": "memory",
+        "secret": false
+      },
+      "settled_tee_quantity": {
+        "syntax": "{{settled_tee_quantity}}",
+        "value": "3",
+        "type": "memory",
+        "secret": false
+      },
+      "cart_total": {
+        "syntax": "{{cart_total}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      },
+      "checkout_summary_settled_tee_visible": {
+        "syntax": "{{checkout_summary_settled_tee_visible}}",
+        "value": "true",
+        "type": "memory",
+        "secret": false
+      },
+      "order_total": {
+        "syntax": "{{order_total}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      },
+      "charged_amount": {
+        "syntax": "{{charged_amount}}",
+        "value": "$54.00",
+        "type": "memory",
+        "secret": false
+      }
+    },
+    "pointer": "(passed) placed an order for three Settled Tees on localhost:3000"
+  },
+  "credits_consumed": 39.9903375,
+  "session_dir": "~/.testmuai/kaneai/sessions/8d5887ef-8fb9-44cd-9ce6-7b5f2534eba0",
+  "run_dir": "~/.testmuai/kaneai/sessions/8d5887ef-8fb9-44cd-9ce6-7b5f2534eba0/runs/0",
+  "result_code": 100,
+  "reason_code": "success.complete",
+  "per_flow_metadata": [
+    {
+      "result_code": "100",
+      "reason_code": "success.complete",
+      "error_message": null,
+      "summary": "You asked to add the Settled Tee to the cart three times, proceed through checkout, and place the order.\nThe cart started empty with a cart count of 0.\nThe Settled Tee was added exactly three times; the cart showed a quantity of 3 and a total of $54.00.\nAt checkout, the order summary listed 3 × Settled Tee with an order total of $54.00.\nThe order was placed successfully, and the confirmation showed a charge of $54.00.",
+      "one_liner": "placed an order for three Settled Tees on localhost:3000",
+      "credits_consumed": 39.9903375
+    }
+  ],
+  "run_id": "run-0",
+  "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M87EP8C176VC7K2T077ZTXGB/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page",
+  "coverage": {
+    "status": "skipped"
+  },
+  "v": 1,
+  "ts": "2026-11-24T18:59:09.728Z"
+}

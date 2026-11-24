@@ -1,0 +1,29 @@
+diff --git a/demo-shop/public/shop.js b/demo-shop/public/shop.js
+index 711baeb..255ba9c 100644
+--- a/demo-shop/public/shop.js
++++ b/demo-shop/public/shop.js
+@@ -11,10 +11,10 @@ function renderBadge(cart) {
+ 
+ function addToCart(id) {
+   const cart = loadCart();
+-  renderBadge(cart);
+   const line = cart.find((i) => i.id === id);
+   if (line) line.qty += 1; else cart.push({ id, qty: 1 });
+   saveCart(cart);
++  renderBadge(cart);
+   const msg = document.getElementById("added-msg");
+   if (msg) msg.textContent = "Added " + CATALOG[id].name;
+ }
+diff --git a/demo-shop/server.js b/demo-shop/server.js
+index 960d9eb..7597bb8 100644
+--- a/demo-shop/server.js
++++ b/demo-shop/server.js
+@@ -16,7 +16,7 @@ function chargeFor(items) {
+   for (const { id, qty } of items) {
+     const p = CATALOG[id];
+     if (!p) throw new Error("unknown item " + id);
+-    total += p.listPrice * qty;
++    total += p.salePrice * qty;
+   }
+   return Math.round(total * 100) / 100;
+ }

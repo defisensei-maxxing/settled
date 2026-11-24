@@ -1,0 +1,11 @@
+14,15d13
+<   // BUG (locked flow): badge is rendered from the cart *before* the new item is added,
+<   // so it always lags one behind. Add 3 shirts -> badge shows 2.
+38d35
+< // Server-side catalog. The storefront shows sale prices; checkout must charge what the shopper saw.
+52d48
+<     // BUG (guard flow): charges list price instead of the sale price the shopper was shown.
+95c91
+<   "description": "Tiny shop with two planted bugs for the Settled cart-badge-wrong bounty.",
+---
+>   "description": "Tiny demo shop for the Settled cart-badge-wrong-v3 bounty.",

@@ -1,0 +1,3 @@
+5826680 2026-11-24 19:00:08 +0000 Record autonomous solve: claim, verify_passed (real Kane), simulated payout to settled-agent
+0393a12 2026-11-24 18:59:20 +0000 Fix cart badge off-by-one and checkout charge using list price
+16f5137 2026-11-24 18:49:54 +0000 Sandbox initial state: cart-badge-wrong-v3 open (posted from recorded real baseline), hints removed

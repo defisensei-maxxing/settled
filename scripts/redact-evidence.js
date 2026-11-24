@@ -80,7 +80,9 @@ function processDir(dir, check) {
       for (const g of walk(d)) if (isTextFile(g)) collectUsernames(fs.readFileSync(g, "utf8")).forEach((n) => names.add(n));
     } else if (isTextFile(f)) collectUsernames(fs.readFileSync(f, "utf8")).forEach((n) => names.add(n));
   }
-  const report = { dir, redacted_at: new Date().toISOString(), rules: RULES.map(([re]) => re.source), files: {} };
+  // Record a repo-relative path: an absolute path would leak the local account name.
+  const relDir = path.relative(path.join(__dirname, ".."), path.resolve(dir)).split(path.sep).join("/");
+  const report = { dir: relDir.startsWith("..") ? path.basename(dir) : relDir, redacted_at: new Date().toISOString(), rules: RULES.map(([re]) => re.source), files: {} };
   const remaining = [];
   const handle = (f, label) => {
     const before = fs.readFileSync(f, "utf8");
