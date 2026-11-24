@@ -17,8 +17,8 @@ function chargeFor(items) {
   for (const { id, qty } of items) {
     const p = CATALOG[id];
     if (!p) throw new Error("unknown item " + id);
-    // Fixed (bounty cart-badge-wrong guard): charge the sale price the shopper was shown.
-    total += p.salePrice * qty;
+    // BUG (guard flow): charges list price instead of the sale price the shopper was shown.
+    total += p.listPrice * qty;
   }
   return Math.round(total * 100) / 100;
 }

@@ -1,75 +1,151 @@
 # Settled
 
-Kane CLI Online Hackathon entry.
+**Bug-bounty escrow where Kane CLI is the neutral judge.** A maintainer locks a bounty to two plain-English test flows. A solver gets paid only when Kane CLI runs both flows against the solver's code and both pass, on fresh, sealed, replay-proof evidence.
 
-**Settled** is an escrow for bug bounties where Kane CLI is the neutral judge. A maintainer locks a bounty to a plain-English test flow. A solver's fix is paid out only when Kane CLI runs that locked flow, plus a guard flow, against the app and both pass.
+Kane CLI Online Hackathon entry. Zero dependencies (Node ≥ 20 plus `kane-cli`).
 
-## Run the demo shop
+> **Payments are simulated.** No real money or tokens move. See [Trust model and limitations](#trust-model-and-limitations).
 
-```bash
-cd demo-shop && npm start   # http://localhost:3000, no dependencies
+---
+
+## What it does in one picture
+
+```mermaid
+flowchart LR
+  M[Maintainer] -- "post: both flows must FAIL on the buggy app<br/>(confirmed product bug on the declared target)" --> O((open<br/>escrow held))
+  O -- claim --> C((claimed))
+  C -- "verify: settled starts the candidate app,<br/>runs both flows through kane-cli" --> V{both pass,<br/>conclusive?}
+  V -- no --> C
+  V -- yes --> VF((verified))
+  VF -- "payout: same code, flows, evidence seal;<br/>verification not yet used" --> P((paid))
+  O -- "cancel (maintainer)" --> X((cancelled<br/>refunded))
+  C -- "cancel (maintainer)" --> X
 ```
 
-The shop ships with two planted bugs:
+- **Locked flow:** proves the bug the bounty is for is fixed (the cart badge).
+- **Guard flow:** a regression guard that must also pass (checkout must charge what the shopper saw). A half fix that passes the locked flow but breaks or ignores the guard is rejected. [We demonstrated exactly that](#what-has-actually-been-demonstrated).
 
-| Bug | Where | Caught by |
-|---|---|---|
-| Add 3 shirts → cart badge shows **2** (badge renders before the item is added) | `demo-shop/public/shop.js` `addToCart` | locked flow |
-| Cart and checkout show the sale total (**$54.00**), but the order is charged list price (**$60.00**) | `demo-shop/server.js` `chargeFor` | guard flow |
+## Architecture
 
-## Fingerprint
-
-A bounty's `fingerprint` (scheme `settled-fp-v2`) is a set of full SHA-256 hashes: one over the trimmed locked flow, one over the trimmed guard flow, and `combined = sha256("settled-fp-v2\n" + id + "\n" + lockedHash + "\n" + guardHash)`. The verifier also checks that the flow text in the bounty JSON is byte-identical to the `.md` files. This pins the bounty to both flows the maintainer funded, so nobody can soften either test after the fact.
-
-A bounty stays `draft` until a baseline run against the unfixed shop shows both flows fail for their planted bug. See `evidence/<id>/regression/` for why: the v1 flows false-passed.
-
-```bash
-node scripts/fingerprint.js cart-badge-wrong           # verify (exit 1 on mismatch)
-node scripts/fingerprint.js cart-badge-wrong --write   # maintainer only: re-pin after editing flows
-scripts/run-flows.sh cart-badge-wrong                  # verify, start shop, run both flows via Kane
+```
+cli/settled.js            CLI: post | claim | verify | payout | cancel | status | escrow
+cli/lib/core.js           state machine + the rules for each command
+cli/lib/ledger.js         append-only, hash-chained ledger per bounty (.settled/ledger/<id>.ndjson)
+cli/lib/escrow.js         simulated escrow DERIVED from the ledgers; conservation checked on every write
+cli/lib/evidence.js       evidence validation: conclusiveness, freshness, replay, seals, flow-text binding
+cli/lib/fingerprint.js    settled-fp-v2: SHA-256 over locked flow, guard flow, and a combined hash
+cli/lib/runtime.js        the only side effects: spawn kane-cli, start the candidate app
+scripts/redact-evidence.js  scrub identity/tokens/paths from evidence, then seal with SHA256SUMS
+scripts/demo-sandbox.sh   throwaway copy with the v3 bounty reset to draft, for live demos
+scripts/run-flows.sh      manual: run both flows through Kane and save evidence
+test/                     52 unit tests; Kane is MOCKED here and mocks are rejected by the CLI
+.claude/skills/settled/   Claude Code skill: claim, iterate with Kane, hand off to settled verify
+.settled/bounties/        bounty metadata + fingerprints     .settled/flows/  the flow texts
+evidence/                 every real Kane run, redacted and sealed (links below)
+patches/                  the solver's half fix and full fix, to replay the demo on the buggy shop
+demo-shop/                target app with two planted bugs (plain HTML + Node, zero deps)
 ```
 
-## Settled CLI
+### How each guarantee is enforced
 
-Zero-dependency Node CLI (`cli/settled.js`, also exposed as the `settled` bin). Kane CLI is the only judge; escrow is **simulated**.
-
-```bash
-node cli/settled.js post   <id> --baseline <evidence-dir> [--accept-legacy-baseline]   # lock + fund on a verified baseline
-node cli/settled.js post   <id> --run-baseline --yes        # or run a fresh baseline (uses Kane credits)
-node cli/settled.js claim  <id> --solver <name>
-node cli/settled.js verify <id> --yes                       # starts the candidate app, runs both flows via Kane (uses credits)
-node cli/settled.js payout <id>                             # releases simulated escrow
-node cli/settled.js status <id>
-npm test                                                    # unit tests, mocked Kane, no credits
-```
-
-State machine: `draft → open (post) → claimed (claim) → verified (verify pass) → paid (payout)`; a failed verify returns to `claimed`.
-
-| Protection | How |
+| Guarantee | Mechanism |
 |---|---|
-| Persistent, tamper-evident state | `.settled/ledger/<id>.ndjson`: append-only, hash-chained events. Every command replays the chain and refuses if the bounty file disagrees with it. |
-| Lock | `post` stores the combined fingerprint in the ledger. Changing a flow later, even re-pinned with `fingerprint.js --write`, blocks verify and payout. |
-| Baseline gate | `post` requires both flows to fail conclusively on the unfixed app (`assertion_error.*`, not infrastructure errors), on evidence produced for this exact fingerprint. |
-| Evidence validation | The Kane evidence pack's objective must equal the locked flow text byte-for-byte, its session id must match the stream, `run_end.json` must match the NDJSON, and `SHA256SUMS` must cover every file. A pass needs `success.complete` with at least one assertion (no vacuous passes). |
-| Replay protection | Each Kane session can be used once across all ledgers. Verify runs must start after the verification nonce is issued. Payout consumes one verification and needs identical app code (content hash), flows and evidence seal. |
-| Independence | `verify` starts the candidate app itself (it refuses if the port is already taken) and runs Kane; solver-supplied results are never accepted. |
-| Mocks | Only under `test/`, labelled `mock:true` / producer `kane-cli-mock`. The CLI always validates in real mode and rejects them. |
+| **Kane is the only judge** | `verify` starts the candidate app itself (it refuses if the port is already taken, so a stale server can't stand in) and spawns `kane-cli run` for both flows. Solver-supplied results are never accepted. |
+| **The test can't be softened** | `post` writes the combined fingerprint into the ledger. If a flow changes later, `verify` and `payout` refuse, even if someone re-pins the bounty file with `fingerprint.js --write`. |
+| **The bounty is real** | `post` needs a baseline where **both** flows fail on the unfixed app with `assertion_error.confirmed_product_bug` **on their declared target check** (`baseline_expectations`). Setup checkpoints, agent errors and infrastructure errors don't count. |
+| **The evidence is what Kane ran** | The objective in the Kane evidence pack must equal the locked flow text byte for byte. The session id must match the NDJSON stream, `run_end.json` must equal the streamed `run_end`, and `SHA256SUMS` must cover every file. |
+| **No vacuous passes** | A pass needs `success.complete` / 100 and at least one recorded assertion. |
+| **No replay** | Each Kane session can be used once across all ledgers. A verify run must start after its nonce is issued. Payout uses up one verification and needs the same app content hash, flows and evidence seal as at verify time. |
+| **Tamper-evident state** | Every event is hash-chained. Each command replays the chain and refuses if an event was edited or removed, or if the bounty file disagrees with the ledger. |
+| **Escrow conserves funds** | Escrow is computed from the ledgers: posted = deposit + hold, cancelled = refund, paid = release. Every write checks `sum(balances) + held == deposited` with no negative balances. `escrow.json` is only a snapshot and editing it moves nothing. |
+| **No leaked identity** | Evidence is redacted before sealing: emails, usernames, user/org ids, report share tokens and local paths. |
 
-Evidence is scrubbed of identity, share tokens and local paths by `scripts/redact-evidence.js` before it is sealed.
+## Install
 
-## Layout
-
+```bash
+git clone git@github.com:defisensei-maxxing/settled.git && cd settled
+node --version                 # >= 20, no npm install needed
+npm test                       # 52 unit tests, mocked Kane, no credits
+kane-cli whoami                # real runs only; otherwise: kane-cli login --oauth
 ```
-.settled/
-  bounties/cart-badge-wrong.json        # bounty: reward, fingerprint, flows, status
-  flows/cart-badge-wrong.locked.md      # the flow the fix must pass
-  flows/cart-badge-wrong.guard.md       # regression guard that must also pass
-.claude/skills/settled/SKILL.md         # Claude Code skill that runs Kane and reacts to its verdicts
-demo-shop/                              # buggy target app (plain HTML + Node, zero deps)
-scripts/fingerprint.js                  # recompute / verify a bounty fingerprint
-scripts/redact-evidence.js              # scrub + seal evidence dirs
-scripts/run-flows.sh                    # manual: run both flows via Kane and save evidence
-cli/                                    # settled CLI (post/claim/verify/payout/status)
-test/                                   # unit tests with mocked Kane (never real evidence)
-.settled/ledger/, .settled/escrow.json  # persistent bounty state, simulated escrow
+
+## Demo commands
+
+**Zero-credit replay in a sandbox** (uses the recorded real baseline, then shows the refusals):
+
+```bash
+scripts/demo-sandbox.sh        # prints the exact commands; the core of it:
+node cli/settled.js post   cart-badge-wrong-v3 --baseline evidence/cart-badge-wrong-v3/baseline-20261124T181329Z
+node cli/settled.js claim  cart-badge-wrong-v3 --solver judge
+patch -p1 < patches/half-fix.patch
+node cli/settled.js payout cart-badge-wrong-v3     # refused: nothing verified
+node cli/settled.js verify cart-badge-wrong-v3     # refused without --yes (it would spend credits)
+node cli/settled.js escrow                         # conservation audit
 ```
+
+A 3-minute storyboard for the submission video is in [docs/DEMO.md](docs/DEMO.md).
+
+**Live Kane** (about 60–90 credits per verify):
+
+```bash
+node cli/settled.js verify cart-badge-wrong-v3 --yes   # half fix: locked PASS, guard FAIL
+patch -p1 -R < patches/half-fix.patch && patch -p1 < patches/solver-fix.patch
+node cli/settled.js verify cart-badge-wrong-v3 --yes   # full fix: both PASS
+node cli/settled.js payout cart-badge-wrong-v3         # simulated 50 USDC to the solver
+```
+
+**Inspect the recorded history in this repo:**
+
+```bash
+node cli/settled.js status cart-badge-wrong      # v2: posted, claimed, 3 failed verifies, cancelled (refunded)
+node cli/settled.js status cart-badge-wrong-v3   # v3: posted, claimed, verify_passed, paid
+node cli/settled.js escrow
+```
+
+## What has actually been demonstrated
+
+Every row is a real `kane-cli` run (kane-cli 0.10.9, Chrome, headless) with sealed evidence in this repo.
+
+| # | Run | Code under test | Locked | Guard | Credits | Evidence |
+|---|---|---|---|---|---|---|
+| 1 | v1 flows, original | buggy | ⚠️ passed (false pass) | ⚠️ passed (false pass) | 45.91 | [regression/v1-false-pass](evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z/REGRESSION.md) |
+| 2 | v2 baseline | buggy | ❌ badge 2 | ❌ charged $60.00 | 94.14 | [20261124T171620Z](evidence/cart-badge-wrong/20261124T171620Z) |
+| 3 | v2 verify, half fix | badge fixed | ✅ | ❌ charged $60.00 → **payout refused** | 89.26 | [verify-…173707Z](evidence/cart-badge-wrong/verify-20261124T173707Z-9237c2de) |
+| 4 | v2 verify, full fix | both fixed | ✅ | ⚠️ Kane agent error, inconclusive | 56.64 | [verify-…175136Z](evidence/cart-badge-wrong/verify-20261124T175136Z-c47452ae) |
+| 5 | v2 verify, full fix | both fixed | ✅ | ⚠️ setup run out of order, inconclusive | 68.27 | [verify-…175732Z](evidence/cart-badge-wrong/verify-20261124T175732Z-4b024942) |
+| 6 | v3 baseline | buggy | ⚠️ Kane browser crash | ❌ charged $60.00 | 57.26 | [baseline-…180739Z](evidence/cart-badge-wrong-v3/baseline-20261124T180739Z) |
+| 7 | v3 baseline | buggy | ❌ badge 2 | ❌ charged $60.00 → **posted** | 70.45 | [baseline-…181329Z](evidence/cart-badge-wrong-v3/baseline-20261124T181329Z) |
+| 8 | v3 verify | both fixed | ✅ badge 3, $54.00 | ✅ charged $54.00 → **paid** | 61.28 | [verify-…181728Z](evidence/cart-badge-wrong-v3/verify-20261124T181728Z-0c8e4100) |
+| | | | | | **543.22** | |
+
+What these runs show:
+- **Kane's verdicts need guarding.** Run 1 passed buggy code: Kane looped until the lagging badge read 3 (4 shirts in the cart), and checked out an empty cart ($0 = $0). That is why flows use fixed click counts and absolute values, and why baselines must fail first.
+- **A half fix is rejected** (run 3). The badge fix alone passed the locked flow, the guard caught the $60.00 overcharge, and the payout was refused.
+- **Inconclusive runs never count** (runs 4–6). Kane agent errors, a setup checkpoint run out of order, and a browser crash were all rejected, never treated as passes or as bug evidence. Runs 4–5 led to flow v3 (unconditional setup) and to the tightened `post` rule. The original bounty was cancelled through the ledger and its escrow refunded.
+- **The full fix gets paid** (runs 7–8). v3 failed on target against the original buggy app (content hash `ddece88f…`), passed against the fixed app (`fc1965ae…`), and 50 USDC (simulated) was released to `demo-solver`. A replayed payout is refused.
+
+**Not demonstrated: autonomous repair by the Settled skill.** In this project the bug fixes were written by Claude Code under step-by-step human direction, and judged by `settled verify` with real Kane. The skill's autonomous loop (claim, read the flows, fix, iterate with `kane-cli`, hand off to `settled verify`) is written and kept in sync with the CLI. It has **not** been run end to end on its own. Demonstrating it needs a fresh bounty (`scripts/demo-sandbox.sh`) and roughly 150–300 Kane credits.
+
+## Trust model and limitations
+
+- **Simulated payments.** Escrow is bookkeeping derived from the ledgers. There's no wallet, chain or payment rail, and the reward is "deposited" at post time by assertion.
+- **Single-machine trust.** The ledger, evidence and escrow are files in the repo. Hash chaining catches edits to *part* of the history, but whoever controls the repo can rewrite *all* of it consistently. The replay registry is per repository too, which is why `demo-sandbox.sh` can re-post the recorded baseline in a fresh copy. Production needs the ledger head anchored outside the repo (a signed append-only log, a transparency service or a chain), signed identities for maintainer and solver, and a verifier the solver doesn't control.
+- **The verifier runs locally.** `verify` trusts the machine it runs on: the Kane binary, Kane's cloud judgment, and the app it starts. Identity is a name string; there's no authentication.
+- **Kane is probabilistic.** A Kane run can end in agent or browser errors (runs 4–6). Settled treats those as inconclusive, which keeps it safe but can cost credits. Flows are written to be unconditional and explicit for that reason.
+- **One port, one verifier at a time.** The flows hardcode `http://localhost:3000`.
+- **The legacy v2 baseline** was posted with `--accept-legacy-baseline`, because it predates the `candidate.json` code binding (the demo shop was unchanged since `6cdc886`). The v3 baseline is fully bound.
+
+## Branches
+
+- `main`: the submission. The demo shop has **both planted bugs** so anyone can replay; the fixes are in `patches/`.
+- `demo/half-fix`, `demo/full-fix`: the history as it happened, with the fixed shop.
+
+## Fingerprints
+
+`settled-fp-v2`: `locked = sha256(trim(locked))`, `guard = sha256(trim(guard))`, `combined = sha256("settled-fp-v2\n" + id + "\n" + locked + "\n" + guard)`.
+
+```bash
+node scripts/fingerprint.js cart-badge-wrong-v3   # verify (exit 1 on mismatch)
+```
+
+v3 combined: `c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa`

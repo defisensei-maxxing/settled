@@ -1,0 +1,34 @@
+diff --git a/demo-shop/public/shop.js b/demo-shop/public/shop.js
+index e41103b..18fcc0a 100644
+--- a/demo-shop/public/shop.js
++++ b/demo-shop/public/shop.js
+@@ -11,12 +11,11 @@ function renderBadge(cart) {
+ 
+ function addToCart(id) {
+   const cart = loadCart();
+-  // BUG (locked flow): badge is rendered from the cart *before* the new item is added,
+-  // so it always lags one behind. Add 3 shirts -> badge shows 2.
+-  renderBadge(cart);
+   const line = cart.find((i) => i.id === id);
+   if (line) line.qty += 1; else cart.push({ id, qty: 1 });
+   saveCart(cart);
++  // Fixed (bounty cart-badge-wrong): render the badge after the item is added.
++  renderBadge(cart);
+   const msg = document.getElementById("added-msg");
+   if (msg) msg.textContent = "Added " + CATALOG[id].name;
+ }
+diff --git a/demo-shop/server.js b/demo-shop/server.js
+index f7c77ef..a610fbb 100644
+--- a/demo-shop/server.js
++++ b/demo-shop/server.js
+@@ -17,8 +17,8 @@ function chargeFor(items) {
+   for (const { id, qty } of items) {
+     const p = CATALOG[id];
+     if (!p) throw new Error("unknown item " + id);
+-    // BUG (guard flow): charges list price instead of the sale price the shopper was shown.
+-    total += p.listPrice * qty;
++    // Fixed (bounty cart-badge-wrong guard): charge the sale price the shopper was shown.
++    total += p.salePrice * qty;
+   }
+   return Math.round(total * 100) / 100;
+ }
