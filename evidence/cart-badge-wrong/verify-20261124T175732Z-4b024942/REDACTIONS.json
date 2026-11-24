@@ -1,0 +1,60 @@
+{
+  "dir": "/Users/st007/settled/evidence/cart-badge-wrong/verify-20261124T175732Z-4b024942",
+  "redacted_at": "2026-11-24T18:01:42.167Z",
+  "rules": [
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+    "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+    "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+    "(^\\s*(?:user_id|org_id|account_id):\\s*)(['\"]?)\\d+\\2",
+    "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+    "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+    "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+    "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+    "\\/Users\\/[^/\"'\\s]+\\/",
+    "\\/home\\/[^/\"'\\s]+\\/"
+  ],
+  "files": {
+    "guard.evidence": {
+      "pre_redaction_sha256": "8a56572b11c60bfcabb6960d2c624529d7eea64f080f773ac1b586d396867919",
+      "inner_files_redacted": {
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/auteur/execution.json": "0890392f13fe39ef328968fed404bf0727f1637dea4a2a841a2b627a8b1a6461",
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/logs/0-run.log": "e92f943dd8d659b25da67905014d262503a72b378ddc9bd464a910aba77d49b0",
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/logs/0-stability-ledger-draft.json": "063ef1aeda8e00793a5ebd4e04e142fac553710e29df729efe1025f0010a9ca8",
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/logs/runner-stderr.log": "4c3b48b5220686b8b3b8deb90cfb582b37c85cbc88b20cd6f3cfd9e85704df4e",
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/logs/tui.log": "60aca06b1e778557dcb8b3cb210d07b5970598f718440b8d8efe7cbb2ad84887",
+        "tests/in-this-fresh-independent-browser-sessio-39191b0a/result.yaml": "4c7d6690f83b0a352fd890211965e24f827d538a468bf1d2fe3e362e256006e2"
+      }
+    },
+    "guard.ndjson": {
+      "pre_redaction_sha256": "61a965528ff4413f406df2e83f80c9d8c4cb5cc098082612c7c22bcdfde39c1d"
+    },
+    "guard.run_end.json": {
+      "pre_redaction_sha256": "4f6209c9d6333949b1cfc0e527114a7cc852f7e5a627dd1dc73c4fbca6a5adb5"
+    },
+    "guard.stderr": {
+      "pre_redaction_sha256": "f07fe8e56cff46fd8b941ce5589d3d1fef44bc131ebd3cbc905c3b8e4a4f0146"
+    },
+    "locked.evidence": {
+      "pre_redaction_sha256": "dd54d4faee6bbe734374ba0e0cef9f6e499bfccb8da3b17430548ec8b40fa314",
+      "inner_files_redacted": {
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/auteur/execution.json": "552a8d837be1bfe6dea7fb24fa0a40293742aa4a1ca23f8bb733ce870066e1ed",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/logs/0-stability-ledger-draft.json": "01eb499bb6571c936bec0d0e0c5433ee68398885b17c8342a660aa6cb0bb5f3e",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/logs/1-stability-ledger-draft.json": "c06a78b2660fc6d6d3800c548a49345d8483e4de5701276b32b929be8be0c18e",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/logs/1-stability-ledger.ndjson": "b1fed6ed48a973e35ca04f558ec15beb2c5892d7fcb95e371bd774bac6cd0e54",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/logs/runner-stderr.log": "216ff4b07e410e8dcfe1cf66a1f428e94ca02dd5f9809908e09aed11451167c3",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/logs/tui.log": "dcb2712882e074dfbc04ff6d68cefbf9c5132643a36c135ef538a8191d6c7091",
+        "tests/open-http-localhost-3000-cart-if-the-car-dda6560f/result.yaml": "d32a6f50aa5cd161659c527637001a288f261e57cc8b3a4cb9ccb79b51eaed7e"
+      }
+    },
+    "locked.ndjson": {
+      "pre_redaction_sha256": "5039a53497d966bbbc7d9db961f48308e348b5988a5700e80dbd673752160769"
+    },
+    "locked.run_end.json": {
+      "pre_redaction_sha256": "78d69bd9cb1d5298e6859be16438a7ff16568fa26a310f2c9c6610637a4c52b9"
+    },
+    "locked.stderr": {
+      "pre_redaction_sha256": "c1ce096d7424bad2a460ad1d0be7bd299af39ca39ab4726360cceb26ad8da433"
+    }
+  }
+}
