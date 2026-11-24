@@ -49,4 +49,9 @@ for kind in locked guard; do
     console.log(JSON.stringify({status:s.status,reason:s.reason,reason_code:s.reason_code,final_state:s.final_state,credits:s.credits_consumed},null,2));
   ' "$OUT/$kind.ndjson" "$OUT" "$kind"
 done
+node -e '
+  const {candidateState}=require("./cli/lib/core"); const b=require("./.settled/bounties/"+process.argv[1]+".json");
+  require("fs").writeFileSync(process.argv[2]+"/candidate.json", JSON.stringify(candidateState(process.cwd(), b), null, 2));
+' "$ID" "$OUT"
+node scripts/redact-evidence.js "$OUT"   # scrub identity/session data, seal SHA256SUMS
 echo "== evidence saved in $OUT"

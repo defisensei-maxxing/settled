@@ -21,28 +21,30 @@
   "activation": {
     "rule": "Bounty may move from draft to open only after the unfixed demo shop makes BOTH flows fail for the planted bug they target: locked = badge shows 2 after exactly 3 clicks; guard = charged $60.00 instead of $54.00 for 3 shirts.",
     "baseline_run": "evidence/cart-badge-wrong/20261124T171620Z",
+    "activated_at": "2026-11-24T17:33:52.306Z",
     "locked_detects_bug": {
       "verdict": "failed",
       "reason_code": "assertion_error.confirmed_product_bug",
       "reason": "Checkpoint assertion failed: \"the header cart badge shows exactly 3\"",
-      "observed": "exactly 3 Add-shirt clicks (steps 6-8), header badge = 2, expected 3",
-      "credits": 31.9253,
-      "kane_session": "~/.testmuai/kaneai/sessions/36898415-39d5-457d-a7f2-6f0257607896",
-      "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M878Y306RMAFBVJ3VD8XHB7Y/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page"
+      "credits": 31.9253
     },
     "guard_detects_bug": {
       "verdict": "failed",
       "reason_code": "assertion_error.confirmed_product_bug",
       "reason": "Final verification failed: \"the order confirmation shows a charged amount of exactly $54.00\"",
-      "observed": "cart qty 3, cart total $54.00, checkout order total $54.00, Charged $60.00 (expected $54.00)",
-      "credits": 62.21719499999999,
-      "kane_session": "~/.testmuai/kaneai/sessions/c455810f-9555-4f3f-9310-42268040143d",
-      "test_url": "https://test-manager.lambdatest.com/projects/01M86W98QSF985SEWKCBJ16JX2/test-cases/01M8791BXNSY6XQB85QVH4501P/dashboard/share/<redacted-share-token>?type=summary&agentView=true&fqdn=summary-page"
-    },
-    "activated_at": "2026-11-24T17:22:17.777Z"
+      "credits": 62.21719499999999
+    }
   },
   "regression_evidence": [
     "evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z"
   ],
-  "proof_run_id": null
+  "proof_run_id": null,
+  "locked": {
+    "at": "2026-11-24T17:33:52.306Z",
+    "by": "maintainer",
+    "fingerprint_combined": "d49fc25d2bb5d21963390c5be5dd2682864c1448da3ac593cfd09e607e45890f",
+    "baseline_dir": "evidence/cart-badge-wrong/20261124T171620Z",
+    "legacy_baseline": true,
+    "ledger_seq": 1
+  }
 }

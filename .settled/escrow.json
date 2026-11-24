@@ -1,0 +1,14 @@
+{
+  "simulated": true,
+  "note": "Simulated escrow. No real funds move.",
+  "holds": {
+    "cart-badge-wrong": {
+      "amount": 50,
+      "currency": "USDC",
+      "from": "maintainer",
+      "state": "held",
+      "held_ref": "5d418d208c33e122b1050f1ab584213f"
+    }
+  },
+  "balances": {}
+}

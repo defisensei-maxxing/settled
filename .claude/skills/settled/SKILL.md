@@ -21,20 +21,23 @@ If not authenticated, tell the user to run `kane-cli login --oauth` once.
 
 When the user says "claim bounty" or you are given a bounty folder:
 
-1. Read `.settled/bounties/<bounty-id>.json` and the locked flow file(s).
-2. Confirm the fingerprint matches the current flow text: run `node scripts/fingerprint.js <bounty-id>` (full SHA-256 over both the locked and guard flow text, plus a combined hash). If it exits non-zero, refuse and report the mismatch.
-3. Start the demo app if needed (`cd demo-shop && npm start`, serves http://localhost:3000) and note the local URL.
-4. For the locked flow (and any guard flow), run:
+1. Read `.settled/bounties/<bounty-id>.json` and the flow files. Only an `open` bounty can be claimed.
+2. Check state and lock: `node cli/settled.js status <bounty-id>`. It refuses if the flows, the bounty file or the ledger disagree. Report the error and stop if it does.
+3. Claim it for the solver: `node cli/settled.js claim <bounty-id> --solver <name>`.
+4. Iterate on the fix with ad-hoc Kane runs (each run consumes Kane credits, so tell the user before running):
 
    ```bash
-   kane-cli run "<flow text>" --url <local-url> --agent --headless
+   cd demo-shop && node server.js     # restart after every code change; serves http://localhost:3000
+   kane-cli run "<exact flow text from the .md file>" --url http://localhost:3000 --agent --headless
    ```
 
-5. Parse the NDJSON stream. Stop at the `run_end` event. Extract status, reason/summary, final_state, duration, and any evidence path.
-6. Decision:
-   - If both locked flow and guard flow return status `passed` → stop and tell the user to run `settled verify`.
-   - If either fails → summarise the reason, make a small code change, re-run both flows. Max 3 attempts.
-7. Never claim done without a fresh pass from Kane. Never edit the locked flow text.
+   Parse the NDJSON stream up to `run_end`: status, reason, reason_code, final_state, credits_consumed.
+5. Decision:
+   - Either flow fails → summarise Kane's reason, make a small code change, restart the app, re-run both flows. Max 3 attempts.
+   - Both pass → stop your own server (verify must start the candidate itself on the same port) and ask the user to run
+     `node cli/settled.js verify <bounty-id> --yes`. Verify runs Kane independently, seals the evidence and records it in the ledger.
+6. Payout is `node cli/settled.js payout <bounty-id>`. It releases simulated escrow only for the latest passing verification, with unchanged code, flows and evidence.
+7. Never claim done without a fresh pass from Kane. Never edit the locked flow text, the ledger, the escrow or the evidence. Never present mocked Kane results as real.
 
 ## Output style
 
