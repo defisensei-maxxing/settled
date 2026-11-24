@@ -55,8 +55,8 @@
   },
   "last_verification": {
     "result": "failed",
-    "at": "2026-11-24T17:42:17.403Z",
-    "evidence_dir": "evidence/cart-badge-wrong/verify-20261124T173707Z-9237c2de",
-    "ledger_seq": 3
+    "at": "2026-11-24T17:55:11.970Z",
+    "evidence_dir": "evidence/cart-badge-wrong/verify-20261124T175136Z-c47452ae",
+    "ledger_seq": 4
   }
 }

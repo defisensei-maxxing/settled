@@ -100,8 +100,9 @@ function validateRun(dir, kind, opts) {
     if ((pack.title || "").trim() !== opts.flowText) errors.push(`${kind}: Kane ran a different objective than the locked ${kind} flow text`);
     if (pack.testCount !== 1) errors.push(`${kind}: evidence pack has ${pack.testCount} tests, expected 1`);
     if (!facts.sessionId || pack.sessionId !== facts.sessionId) errors.push(`${kind}: session id mismatch between stream (${facts.sessionId}) and evidence pack (${pack.sessionId})`);
-    const packStatus = runEnd.status === "passed" ? "passed" : "failed";
-    if (pack.resultStatus !== packStatus) errors.push(`${kind}: evidence pack status ${pack.resultStatus} contradicts run_end ${runEnd.status}`);
+    // Kane marks agent/infrastructure errors as "broken" in the pack; that is a (non-conclusive) failure, not a contradiction.
+    const okPackStatuses = runEnd.status === "passed" ? ["passed"] : ["failed", "broken"];
+    if (!okPackStatuses.includes(pack.resultStatus)) errors.push(`${kind}: evidence pack status ${pack.resultStatus} contradicts run_end ${runEnd.status}`);
   }
 
   // Freshness / replay.

@@ -1,0 +1,58 @@
+{
+  "dir": "/Users/st007/settled/evidence/cart-badge-wrong/verify-20261124T175136Z-c47452ae",
+  "redacted_at": "2026-11-24T17:55:11.818Z",
+  "rules": [
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    "(\"(?:username|user_name|tms_user|user|email|user_email)\"\\s*:\\s*\")[^\"]*(\")",
+    "(\\b(?:user_name|username|tms_user|user_email)\\s*:\\s*)\\S+",
+    "(\"(?:user_id|org_id|account_id|userId|orgId)\"\\s*:\\s*)(\"?)[^,}\"]+\\2",
+    "(^\\s*(?:user_id|org_id|account_id):\\s*)(['\"]?)\\d+\\2",
+    "(\\/share\\/)[A-Za-z0-9_-]{16,}",
+    "((?:access|refresh|id|auth|api)[_-]?(?:token|key)\"?\\s*[:=]\\s*\"?)[A-Za-z0-9._\\-]{8,}",
+    "(authorization\"?\\s*[:=]\\s*\"?(?:bearer|basic)\\s+)[A-Za-z0-9._~+\\/=-]+",
+    "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{5,}",
+    "\\/Users\\/[^/\"'\\s]+\\/",
+    "\\/home\\/[^/\"'\\s]+\\/"
+  ],
+  "files": {
+    "guard.evidence": {
+      "pre_redaction_sha256": "d2f7b6058a6969e51ffb3392fe457e6c41642be7ca29619f5a8a5d73b6d17cd0",
+      "inner_files_redacted": {
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/auteur/execution.json": "075019fcdf9f8b887e26b45947ca8ac77ca064ef638f3ae81e9568ec475214e1",
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/logs/0-run.log": "b8e749c0a3d390ad8e2bc195bbb2a7e702556645f07bfec701f1704ca6f3c199",
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/logs/0-stability-ledger-draft.json": "a598cc3c2732a89094db31895258c87f11af5d275beb78818a9a1feec58040b8",
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/logs/runner-stderr.log": "1c43f8c202868194cd5c85a35da2d92fd54b9ee6ee6091a21572408797bac291",
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/logs/tui.log": "54bc6699d8a9685685b1c29d50e62b93b4cae861ea85fe333cf5835b6d58541a",
+        "tests/in-this-fresh-independent-browser-sessio-ed5b6549/result.yaml": "64eee7525a1556e8b1480740efc8b0c877183010610bbe35c39ac86eb1b10ab4"
+      }
+    },
+    "guard.ndjson": {
+      "pre_redaction_sha256": "877d11e2e953cfe7a2566e91a281fd0ecf6d716932091faaf6dec1567c4f7c7d"
+    },
+    "guard.run_end.json": {
+      "pre_redaction_sha256": "e13d8af1d501f643f485fffb3a80655d6db3b9bae7495d3c13878b574a22a6b0"
+    },
+    "guard.stderr": {
+      "pre_redaction_sha256": "69d2bb945ac7026a37e784b23e7fc5a2ba147b612f399ae2bd8f03a8ae15d187"
+    },
+    "locked.evidence": {
+      "pre_redaction_sha256": "5d283e6897a0f07d834a30b8ae72ee162c75f36c11500ad048f00e02df25059a",
+      "inner_files_redacted": {
+        "tests/open-http-localhost-3000-cart-if-the-car-9097c818/auteur/execution.json": "9e97500f40b23323b6fdbeb598fdec7389815f07ade86e23b398db29ffc309a9",
+        "tests/open-http-localhost-3000-cart-if-the-car-9097c818/logs/0-stability-ledger-draft.json": "e87ee3dbf43040bd89ab6efd4811348f07b9a1bd10f203012c22880487e712b6",
+        "tests/open-http-localhost-3000-cart-if-the-car-9097c818/logs/runner-stderr.log": "8f8f7b6fe1a63ec37d82514c9768b8870443769e49bd3dae7fb1e77ae12a1e3e",
+        "tests/open-http-localhost-3000-cart-if-the-car-9097c818/logs/tui.log": "3edab7dc8a42c95eb722d79f7e56f497f5324a7d10cd20be7e5f9942de97edb5",
+        "tests/open-http-localhost-3000-cart-if-the-car-9097c818/result.yaml": "ec4394c598ab9a58f149b11dcf1aa45a4ce11c252050264a7e706e4ae2b410ae"
+      }
+    },
+    "locked.ndjson": {
+      "pre_redaction_sha256": "88a95eefea4b8a153561b5e6b5f60ba7370cd81710f4ded0ab24343c6f671458"
+    },
+    "locked.run_end.json": {
+      "pre_redaction_sha256": "ebd5af4930d4818551734e916da440a1d460c0b87666bd7e7265ca22a93a2d17"
+    },
+    "locked.stderr": {
+      "pre_redaction_sha256": "2f37f1db022e9ab35fc3de224ed44b52b220561c95b3b0f5e79cfa8ab7fb67cc"
+    }
+  }
+}
