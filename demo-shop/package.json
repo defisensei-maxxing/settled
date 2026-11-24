@@ -1,0 +1,7 @@
+{
+  "name": "settled-demo-shop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tiny shop with two planted bugs for the Settled cart-badge-wrong bounty.",
+  "scripts": { "start": "node server.js" }
+}

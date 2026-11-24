@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><script src="/shop.js"></script><title>Checkout · Settled Shop</title></head><body>
+<header><a href="/">Settled Shop</a><a id="cart-link" href="/cart">Cart <span id="cart-badge" aria-label="cart item count">0</span></a></header>
+<main>
+<h1>Checkout</h1>
+<div class="card" id="summary"></div>
+<p class="total">Order total: <span id="order-total">$0.00</span></p>
+<p style="text-align:right"><button id="place-order">Place order</button></p>
+<div class="card" id="receipt" hidden>
+  <h2>Order confirmed</h2>
+  <p>Order <span id="order-id"></span></p>
+  <p class="total">Charged: <span id="charged-amount"></span></p>
+</div>
+</main>
+<script>
+window.checkoutPage = () => {
+  const cart = loadCart();
+  document.getElementById("summary").innerHTML = cart.map(i => {
+    const p = CATALOG[i.id];
+    return "<p>"+i.qty+" × "+p.name+" @ "+money(p.salePrice)+" = "+money(p.salePrice*i.qty)+"</p>";
+  }).join("") || "<p>Cart is empty</p>";
+  document.getElementById("order-total").textContent = money(cartTotal(cart));
+  document.getElementById("place-order").onclick = async () => {
+    const r = await fetch("/api/checkout", { method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify({ items: cart }) });
+    const data = await r.json();
+    document.getElementById("order-id").textContent = data.orderId;
+    document.getElementById("charged-amount").textContent = money(data.charged);
+    document.getElementById("receipt").hidden = false;
+    localStorage.removeItem("cart");
+    renderBadge([]);
+  };
+};
+boot("checkoutPage");
+</script></body></html>

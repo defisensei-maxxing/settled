@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><script src="/shop.js"></script><title>Cart · Settled Shop</title></head><body>
+<header><a href="/">Settled Shop</a><a id="cart-link" href="/cart">Cart <span id="cart-badge" aria-label="cart item count">0</span></a></header>
+<main>
+<h1>Your cart</h1>
+<table><thead><tr><th>Item</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Line total</th></tr></thead><tbody id="lines"></tbody></table>
+<p class="total">Total: <span id="cart-total">$0.00</span></p>
+<p style="text-align:right"><a href="/checkout"><button id="go-checkout">Checkout</button></a> <button onclick="localStorage.removeItem('cart');location.reload()">Empty cart</button></p>
+</main>
+<script>
+window.cartPage = () => {
+  const cart = loadCart();
+  document.getElementById("lines").innerHTML = cart.map(i => {
+    const p = CATALOG[i.id];
+    return "<tr><td>"+p.name+"</td><td class=num>"+money(p.salePrice)+"</td><td class=num>"+i.qty+"</td><td class=num>"+money(p.salePrice*i.qty)+"</td></tr>";
+  }).join("") || "<tr><td colspan=4>Cart is empty</td></tr>";
+  document.getElementById("cart-total").textContent = money(cartTotal(cart));
+};
+boot("cartPage");
+</script></body></html>
