@@ -3,7 +3,7 @@
   "title": "Cart badge shows wrong count",
   "reward": 50,
   "currency": "USDC",
-  "status": "claimed",
+  "status": "cancelled",
   "flow_version": 2,
   "fingerprint": {
     "algorithm": "sha256",
@@ -58,5 +58,15 @@
     "at": "2026-11-24T18:01:42.340Z",
     "evidence_dir": "evidence/cart-badge-wrong/verify-20261124T175732Z-4b024942",
     "ledger_seq": 5
+  },
+  "cancellation": {
+    "at": "2026-11-24T18:07:23.462Z",
+    "reason": "Superseded by flow v3: v2 guard setup step was run out of order by Kane twice on the fixed app (inconclusive, never reached checkout). Target assertions unchanged.",
+    "superseded_by": "cart-badge-wrong-v3",
+    "refunded_to": "maintainer",
+    "amount": 50,
+    "currency": "USDC",
+    "simulated": true,
+    "ledger_seq": 6
   }
 }

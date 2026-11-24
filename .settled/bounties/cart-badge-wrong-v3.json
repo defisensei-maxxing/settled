@@ -1,0 +1,31 @@
+{
+  "id": "cart-badge-wrong-v3",
+  "title": "Cart badge shows wrong count",
+  "reward": 50,
+  "currency": "USDC",
+  "status": "draft",
+  "flow_version": 3,
+  "supersedes": "cart-badge-wrong",
+  "fingerprint": {
+    "algorithm": "sha256",
+    "scheme": "settled-fp-v2",
+    "locked": "ab68d4b9fed96eb516ec8c2ef8cacc8c076f10e322dc1012fef608730e3fb9d3",
+    "guard": "352b362d0915e218c6bedcdd913c17a54bcc98051bdfc4b2783193cf5e6968de",
+    "combined": "c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa"
+  },
+  "locked_flow": "Open http://localhost:3000/cart. Verify the cart shows \"Cart is empty\" and the header cart badge shows 0.\nGo to http://localhost:3000/ and click the \"Add shirt to cart\" button exactly 3 times in total, one click after another. Do not repeat, retry, or add clicks based on the cart badge or any other page state; the badge must never be used as a loop or stop condition.\nWithout reloading or leaving the page, verify the header cart badge shows exactly 3.\nOpen the cart page. Verify the Settled Tee row shows a quantity of exactly 3.\nVerify the cart total is exactly $54.00.",
+  "guard_flow": "Open http://localhost:3000/cart. Verify the cart shows \"Cart is empty\" and the header cart badge shows 0.\nGo to http://localhost:3000/ and click the \"Add shirt to cart\" button exactly 3 times in total. Do not add clicks based on the cart badge or any other page state.\nOpen the cart page. Verify the Settled Tee row shows a quantity of exactly 3 and the cart total is exactly $54.00.\nClick Checkout. Verify the checkout summary lists 3 × Settled Tee and the order total is exactly $54.00.\nClick \"Place order\". Verify the order confirmation shows a charged amount of exactly $54.00.",
+  "demo_url": "http://localhost:3000",
+  "app_dir": "demo-shop",
+  "created_at": "2026-11-24T18:07:17.793Z",
+  "revision_note": "v3: unconditional setup steps. v2 guard runs on the fixed app were inconclusive twice because Kane ran the conditional empty-cart setup out of order. Target assertions unchanged.",
+  "baseline_expectations": {
+    "locked": "the header cart badge shows exactly 3",
+    "guard": "charged amount of exactly $54.00"
+  },
+  "activation": {
+    "rule": "Bounty may move from draft to open only when the unfixed demo shop makes BOTH flows fail as assertion_error.confirmed_product_bug on their declared target check (baseline_expectations).",
+    "baseline_run": null
+  },
+  "proof_run_id": null
+}

@@ -6,9 +6,13 @@
       "amount": 50,
       "currency": "USDC",
       "from": "maintainer",
-      "state": "held",
-      "held_ref": "5d418d208c33e122b1050f1ab584213f"
+      "state": "refunded",
+      "held_ref": "5d418d208c33e122b1050f1ab584213f",
+      "to": "maintainer",
+      "refunded_ref": "10a5f0c7f8d86593ceca0c69d33121c5"
     }
   },
-  "balances": {}
+  "balances": {
+    "maintainer:USDC": 50
+  }
 }
