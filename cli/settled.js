@@ -9,6 +9,7 @@
 //   settled payout <id>
 //   settled cancel <id> --reason <text> [--superseded-by <id>] [--maintainer <name>]
 //   settled status <id>
+//   settled escrow                 audit the simulated escrow (derived from the ledgers; checks conservation)
 //
 // The CLI always uses the real kane-cli runner and never accepts mocked Kane results.
 const path = require("path");
@@ -36,10 +37,20 @@ const USAGE = `usage:
   settled verify <id> --yes [--verifier <name>]                    (consumes Kane credits)
   settled payout <id>
   settled cancel <id> --reason <text> [--superseded-by <id>] [--maintainer <name>]
-  settled status <id>`;
+  settled status <id>
+  settled escrow`;
 
 async function main() {
-  const { cmd, id, flags } = parse(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  if (argv[0] === "escrow") {
+    const flags = parse(["escrow", "_", ...argv.slice(1)]).flags;
+    const a = core.escrow.audit(path.resolve(flags.root || path.join(__dirname, "..")));
+    const { journal, ...summary } = a;
+    console.log(JSON.stringify(summary, null, 2));
+    if (!a.snapshot_matches) console.error("settled: .settled/escrow.json differs from the ledger-derived escrow (the ledgers are authoritative)");
+    return a.ok ? 0 : 1;
+  }
+  const { cmd, id, flags } = parse(argv);
   if (!cmd || !id || cmd === "help") { console.log(USAGE); return cmd ? 0 : 2; }
   const ctx = {
     root: path.resolve(flags.root || path.join(__dirname, "..")),

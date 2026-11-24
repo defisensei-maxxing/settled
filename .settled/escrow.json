@@ -1,28 +1,94 @@
 {
   "simulated": true,
-  "note": "Simulated escrow. No real funds move.",
+  "note": "Simulated escrow derived from .settled/ledger/*.ndjson. No real funds move. Do not edit; run `settled escrow`.",
+  "balances": {
+    "demo-solver:USDC": 50,
+    "maintainer:USDC": 50
+  },
   "holds": {
     "cart-badge-wrong": {
       "amount": 50,
       "currency": "USDC",
       "from": "maintainer",
       "state": "refunded",
-      "held_ref": "5d418d208c33e122b1050f1ab584213f",
+      "posted_seq": 1,
       "to": "maintainer",
-      "refunded_ref": "10a5f0c7f8d86593ceca0c69d33121c5"
+      "settled_seq": 6
     },
     "cart-badge-wrong-v3": {
       "amount": 50,
       "currency": "USDC",
       "from": "maintainer",
       "state": "released",
-      "held_ref": "fe847326442346645d499a06ba5121d0",
+      "posted_seq": 1,
       "to": "demo-solver",
-      "released_ref": "f705d4fd541a90fd27ca6802aa741a1d"
+      "settled_seq": 4
     }
   },
-  "balances": {
-    "maintainer:USDC": 50,
-    "demo-solver:USDC": 50
-  }
+  "conservation": {
+    "USDC": {
+      "deposited": 100,
+      "balances": 100,
+      "held": 0,
+      "ok": true
+    }
+  },
+  "negative_balances": [],
+  "ok": true,
+  "journal": [
+    {
+      "bounty": "cart-badge-wrong",
+      "seq": 1,
+      "at": "2026-11-24T17:33:52.306Z",
+      "kind": "deposit",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong",
+      "seq": 1,
+      "at": "2026-11-24T17:33:52.306Z",
+      "kind": "hold",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong",
+      "seq": 6,
+      "at": "2026-11-24T18:07:23.462Z",
+      "kind": "refund",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 1,
+      "at": "2026-11-24T18:17:08.907Z",
+      "kind": "deposit",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 1,
+      "at": "2026-11-24T18:17:08.907Z",
+      "kind": "hold",
+      "account": "maintainer",
+      "amount": 50,
+      "currency": "USDC"
+    },
+    {
+      "bounty": "cart-badge-wrong-v3",
+      "seq": 4,
+      "at": "2026-11-24T18:22:01.536Z",
+      "kind": "release",
+      "account": "demo-solver",
+      "amount": 50,
+      "currency": "USDC"
+    }
+  ]
 }

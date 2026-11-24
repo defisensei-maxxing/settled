@@ -1,9 +1,9 @@
 // Persistent, tamper-evident bounty state.
 //   .settled/ledger/<id>.ndjson  append-only, hash-chained events (the source of truth for status)
-//   .settled/escrow.json         simulated escrow: held funds per bounty and released balances
+//   (simulated escrow is derived from these ledgers: see escrow.js)
 const fs = require("fs");
 const path = require("path");
-const { sha256, canonical, readJSON, writeJSONAtomic, SettledError } = require("./util");
+const { sha256, canonical, SettledError } = require("./util");
 
 const GENESIS = "0".repeat(64);
 // Allowed transitions: event type -> [required current status, resulting status]
@@ -71,40 +71,6 @@ function usedSessions(root) {
   return used;
 }
 
-// ---- simulated escrow ----
-const escrowPath = (root) => path.join(root, ".settled", "escrow.json");
-function loadEscrow(root) {
-  const p = escrowPath(root);
-  return fs.existsSync(p) ? readJSON(p) : { simulated: true, note: "Simulated escrow. No real funds move.", holds: {}, balances: {} };
-}
-function hold(root, id, { amount, currency, from, ref }) {
-  const esc = loadEscrow(root);
-  if (esc.holds[id] && esc.holds[id].state === "held") throw new SettledError(`escrow already holds funds for ${id}`);
-  esc.holds[id] = { amount, currency, from, state: "held", held_ref: ref };
-  writeJSONAtomic(escrowPath(root), esc);
-}
-function release(root, id, { to, ref }) {
-  const esc = loadEscrow(root);
-  const h = esc.holds[id];
-  if (!h || h.state !== "held") throw new SettledError(`no held escrow for ${id}`);
-  h.state = "released"; h.to = to; h.released_ref = ref;
-  const key = `${to}:${h.currency}`;
-  esc.balances[key] = Math.round(((esc.balances[key] || 0) + h.amount) * 1e6) / 1e6;
-  writeJSONAtomic(escrowPath(root), esc);
-  return h;
-}
-
-function refund(root, id, { ref }) {
-  const esc = loadEscrow(root);
-  const h = esc.holds[id];
-  if (!h || h.state !== "held") throw new SettledError(`no held escrow for ${id}`);
-  h.state = "refunded"; h.to = h.from; h.refunded_ref = ref;
-  const key = `${h.from}:${h.currency}`;
-  esc.balances[key] = Math.round(((esc.balances[key] || 0) + h.amount) * 1e6) / 1e6;
-  writeJSONAtomic(escrowPath(root), esc);
-  return h;
-}
-
 // Single-writer lock so two commands can't interleave ledger appends.
 function withLock(root, fn) {
   const p = path.join(root, ".settled", ".lock");
@@ -119,4 +85,4 @@ async function withLockAsync(root, fn) {
   try { return await fn(); } finally { fs.closeSync(fd); fs.rmSync(p, { force: true }); }
 }
 
-module.exports = { TRANSITIONS, readEvents, replay, append, usedSessions, loadEscrow, hold, release, refund, withLock, withLockAsync, ledgerPath };
+module.exports = { TRANSITIONS, readEvents, replay, append, usedSessions, withLock, withLockAsync, ledgerPath };

@@ -9,6 +9,7 @@ const { hashDir, readJSON, writeJSONAtomic, nonce, SettledError } = require("./u
 const fingerprint = require("./fingerprint");
 const evidence = require("./evidence");
 const ledger = require("./ledger");
+const escrow = require("./escrow");
 const { processDir } = require("../../scripts/redact-evidence");
 
 const bountyPath = (root, id) => path.join(root, ".settled", "bounties", id + ".json");
@@ -71,6 +72,7 @@ async function post(ctx, id, opts = {}) {
     if (!evidence.KINDS.every((k) => typeof exp[k] === "string" && exp[k].trim().length >= 8)) {
       throw new SettledError("bounty must declare baseline_expectations.locked and .guard: the target check each flow must fail on against the buggy app");
     }
+    if (!(Number(bounty.reward) > 0) || !bounty.currency) throw new SettledError("bounty needs a positive reward and a currency");
     const current = candidateState(ctx.root, bounty);
     let dir, notBefore = null, legacy = false;
     if (opts.runBaseline) {
@@ -92,12 +94,11 @@ async function post(ctx, id, opts = {}) {
     if (!v.ok) throw new SettledError("baseline does not prove both planted bugs are detected; bounty stays draft", v.errors);
 
     const sessions = [v.runs.locked.sessionId, v.runs.guard.sessionId];
-    const ref = nonce();
-    ledger.hold(ctx.root, id, { amount: bounty.reward, currency: bounty.currency, from: maintainer, ref });
     const { event, status: next } = ledger.append(ctx.root, id, "posted", maintainer, {
+      escrow: { amount: Number(bounty.reward), currency: bounty.currency, from: maintainer, deposit_and_hold: true, simulated: true },
       fingerprint: fp.computed, baseline_dir: rel(ctx.root, dir), baseline_sums_sha256: v.sumsHash, sessions,
       verdicts: { locked: v.runs.locked.reason, guard: v.runs.guard.reason },
-      app_hash: current.app_hash, git_head: current.git_head, legacy_baseline: legacy, escrow_ref: ref, mock: v.mock,
+      app_hash: current.app_hash, git_head: current.git_head, legacy_baseline: legacy, mock: v.mock,
       baseline_expectations: bounty.baseline_expectations,
     }, ctx.now);
     bounty.status = next;
@@ -106,6 +107,7 @@ async function post(ctx, id, opts = {}) {
       locked_detects_bug: { verdict: v.runs.locked.status, reason_code: v.runs.locked.reason_code, reason: v.runs.locked.reason, credits: v.runs.locked.credits_consumed },
       guard_detects_bug: { verdict: v.runs.guard.status, reason_code: v.runs.guard.reason_code, reason: v.runs.guard.reason, credits: v.runs.guard.credits_consumed } };
     saveBounty(ctx, id, bounty);
+    escrow.writeSnapshot(ctx.root);
     return { status: next, event, validation: v, mock: v.mock };
   });
 }
@@ -177,13 +179,14 @@ function payout(ctx, id) {
     if (errors.length) throw new SettledError("evidence no longer proves both flows passed; escrow stays held", errors);
 
     const solver = bounty.claim && bounty.claim.solver;
-    const ref = nonce();
-    const held = ledger.release(ctx.root, id, { to: solver, ref });
-    const { event, status: next } = ledger.append(ctx.root, id, "paid", "settled", { verification_nonce: vd.nonce, verification_seq: lastVerify.seq, solver, amount: held.amount, currency: held.currency, escrow_ref: ref, simulated: true, mock: vd.mock }, ctx.now);
+    const held = escrow.compute(ctx.root).holds[id];
+    if (!held || held.state !== "held") throw new SettledError(`no held escrow for ${id}`);
+    const { event, status: next } = ledger.append(ctx.root, id, "paid", "settled", { verification_nonce: vd.nonce, verification_seq: lastVerify.seq, solver, amount: held.amount, currency: held.currency, simulated: true, mock: vd.mock }, ctx.now);
     bounty.status = next;
     bounty.payout = { to: solver, amount: held.amount, currency: held.currency, at: event.at, simulated: true, ledger_seq: event.seq, mock: vd.mock || undefined };
     bounty.proof_run_id = vd.nonce;
     saveBounty(ctx, id, bounty);
+    escrow.writeSnapshot(ctx.root);
     return { status: next, event, amount: held.amount, currency: held.currency, solver, mock: vd.mock };
   });
 }
@@ -197,22 +200,23 @@ function cancel(ctx, id, opts = {}) {
     if ((opts.maintainer || "maintainer") !== posted.actor) throw new SettledError(`only the posting maintainer (${posted.actor}) can cancel`);
     if (!opts.reason || opts.reason.trim().length < 10) throw new SettledError("cancel requires --reason (at least 10 characters)");
     if (opts.supersededBy && !fs.existsSync(bountyPath(ctx.root, opts.supersededBy))) throw new SettledError(`superseding bounty ${opts.supersededBy} does not exist`);
-    const ref = nonce();
-    const held = ledger.refund(ctx.root, id, { ref });
+    const held = escrow.compute(ctx.root).holds[id];
+    if (!held || held.state !== "held") throw new SettledError(`no held escrow for ${id}`);
     const { event, status: next } = ledger.append(ctx.root, id, "cancelled", posted.actor, {
       reason: opts.reason, superseded_by: opts.supersededBy || null, refunded_to: held.from, amount: held.amount, currency: held.currency,
-      escrow_ref: ref, simulated: true, claimant_at_cancel: (bounty.claim && bounty.claim.solver) || null,
+      simulated: true, claimant_at_cancel: (bounty.claim && bounty.claim.solver) || null,
     }, ctx.now);
     bounty.status = next;
     bounty.cancellation = { at: event.at, reason: opts.reason, superseded_by: opts.supersededBy || null, refunded_to: held.from, amount: held.amount, currency: held.currency, simulated: true, ledger_seq: event.seq };
     saveBounty(ctx, id, bounty);
+    escrow.writeSnapshot(ctx.root);
     return { status: next, event, refunded_to: held.from, amount: held.amount, currency: held.currency };
   });
 }
 
 function statusOf(ctx, id) {
   const { bounty, status, events, fp, posted } = preflight(ctx, id);
-  return { id, status, reward: `${bounty.reward} ${bounty.currency}`, fingerprint: fp.computed.combined, locked_to: posted && posted.data.fingerprint.combined, solver: bounty.claim && bounty.claim.solver, events: events.map((e) => `${e.seq} ${e.at} ${e.type}${e.data && e.data.mock ? " (MOCK)" : ""}`), escrow: ledger.loadEscrow(ctx.root).holds[id] || null };
+  return { id, status, reward: `${bounty.reward} ${bounty.currency}`, fingerprint: fp.computed.combined, locked_to: posted && posted.data.fingerprint.combined, solver: bounty.claim && bounty.claim.solver, events: events.map((e) => `${e.seq} ${e.at} ${e.type}${e.data && e.data.mock ? " (MOCK)" : ""}`), escrow: escrow.compute(ctx.root).holds[id] || null };
 }
 
-module.exports = { post, claim, verify, payout, cancel, statusOf, preflight, candidateState };
+module.exports = { escrow, post, claim, verify, payout, cancel, statusOf, preflight, candidateState };

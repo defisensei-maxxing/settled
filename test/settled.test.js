@@ -8,6 +8,7 @@ const os = require("os");
 const path = require("path");
 const core = require("../cli/lib/core");
 const ledger = require("../cli/lib/ledger");
+const escrowLib = require("../cli/lib/escrow");
 const evidence = require("../cli/lib/evidence");
 const fingerprint = require("../cli/lib/fingerprint");
 const { mockRunner, mockApp } = require("./mock-kane");
@@ -86,7 +87,7 @@ test("post with the real legacy baseline needs explicit maintainer attestation",
   assert.equal(r.status, "open");
   assert.equal(r.mock, false);
   assert.equal(r.event.data.legacy_baseline, true);
-  assert.equal(ledger.loadEscrow(root).holds[ID].state, "held");
+  assert.equal(escrowLib.compute(root).holds[ID].state, "held");
 });
 
 test("the same real baseline sessions cannot be used to post twice (replay)", async () => {
@@ -136,7 +137,7 @@ for (const [name, scenario, re] of [
     await rejects(core.post(ctxFor(root, scenario), ID, { runBaseline: true }), re);
     assert.equal(bounty(root).status, "draft");
     assert.equal(ledger.replay(root, ID).events.length, 0);
-    assert.equal(ledger.loadEscrow(root).holds[ID], undefined);
+    assert.equal(escrowLib.compute(root).holds[ID], undefined);
   });
 }
 
@@ -244,7 +245,7 @@ test("payout releases simulated escrow to the solver exactly once", async () => 
   const r = core.payout(ctxFor(root, {}), ID);
   assert.equal(r.status, "paid");
   assert.equal(r.solver, "alice");
-  const esc = ledger.loadEscrow(root);
+  const esc = escrowLib.compute(root);
   assert.equal(esc.simulated, true);
   assert.equal(esc.holds[ID].state, "released");
   assert.equal(esc.balances["alice:USDC"], 50);
@@ -276,7 +277,7 @@ test("payout refuses if sealed evidence was tampered with", async () => {
   const p = path.join(dir, "guard.run_end.json");
   const j = JSON.parse(fs.readFileSync(p, "utf8")); j.reason = "edited"; fs.writeFileSync(p, JSON.stringify(j));
   throws(() => core.payout(ctxFor(root, {}), ID), /modified after sealing|does not match/);
-  assert.equal(ledger.loadEscrow(root).holds[ID].state, "held");
+  assert.equal(escrowLib.compute(root).holds[ID].state, "held");
 });
 
 test("payout refuses if evidence was re-sealed after tampering", async () => {
@@ -331,7 +332,7 @@ test("cancel returns simulated escrow to the maintainer through a ledger event",
   core.claim(ctxFor(root, {}), ID, { solver: "alice" });
   const r = core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision", maintainer: "maintainer" });
   assert.equal(r.status, "cancelled");
-  const esc = ledger.loadEscrow(root);
+  const esc = escrowLib.compute(root);
   assert.equal(esc.holds[ID].state, "refunded");
   assert.equal(esc.balances["maintainer:USDC"], 50);
   const last = ledger.replay(root, ID).events.pop();
@@ -352,7 +353,7 @@ test("cancelled bounties are terminal: no claim, verify, payout or second cancel
 test("cancel is refused once a solver holds a passing verification", async () => {
   const root = await verifiedRoot();
   throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "trying to dodge the payout" }), /bounty is verified/);
-  assert.equal(ledger.loadEscrow(root).holds[ID].state, "held");
+  assert.equal(escrowLib.compute(root).holds[ID].state, "held");
 });
 
 test("cancel needs the posting maintainer, a reason, and an existing successor", async () => {
@@ -361,6 +362,81 @@ test("cancel needs the posting maintainer, a reason, and an existing successor",
   throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "x" }), /--reason/);
   throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision", supersededBy: "nope" }), /does not exist/);
   assert.equal(bounty(root).status, "open");
+});
+
+
+// ---------------- simulated escrow accounting ----------------
+const books = (root) => { const e = escrowLib.compute(root); assert.equal(e.ok, true, JSON.stringify(e.conservation)); return e; };
+
+test("escrow conserves balances through post -> claim -> verify -> payout", async () => {
+  const root = makeRoot();
+  await core.post(ctxFor(root, { locked: "fail", guard: "fail" }), ID, { runBaseline: true });
+  let e = books(root);
+  assert.deepEqual(e.conservation.USDC, { deposited: 50, balances: 0, held: 50, ok: true });
+  core.claim(ctxFor(root, {}), ID, { solver: "alice" });
+  await core.verify(ctxFor(root, { locked: "pass", guard: "pass" }), ID);
+  assert.equal(books(root).conservation.USDC.held, 50, "verification alone moves no funds");
+  core.payout(ctxFor(root, {}), ID);
+  e = books(root);
+  assert.deepEqual(e.conservation.USDC, { deposited: 50, balances: 50, held: 0, ok: true });
+  assert.deepEqual(e.balances, { "alice:USDC": 50 });
+  assert.deepEqual(e.journal.map((j) => j.kind), ["deposit", "hold", "release"]);
+});
+
+test("escrow conserves balances through post -> cancel (refund)", async () => {
+  const root = await postedRoot();
+  core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision" });
+  const e = books(root);
+  assert.deepEqual(e.conservation.USDC, { deposited: 50, balances: 50, held: 0, ok: true });
+  assert.deepEqual(e.balances, { "maintainer:USDC": 50 });
+  assert.deepEqual(e.journal.map((j) => j.kind), ["deposit", "hold", "refund"]);
+});
+
+test("escrow conserves balances across several bounties (refund one, pay another)", async () => {
+  const root = await postedRoot();
+  core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision" });
+  // second bounty with its own flows and fingerprint
+  for (const k of ["locked", "guard"]) fs.copyFileSync(path.join(root, ".settled/flows", `${ID}.${k}.md`), path.join(root, ".settled/flows", `b2.${k}.md`));
+  const b = bounty(root);
+  Object.assign(b, { id: "b2", status: "draft", reward: 12.5, fingerprint: fingerprint.computeFromText("b2", fingerprint.readFlows(root, "b2")) });
+  for (const k of ["locked", "claim", "cancellation", "last_verification", "payout"]) delete b[k];
+  fs.writeFileSync(path.join(root, ".settled/bounties/b2.json"), JSON.stringify(b));
+  await core.post(ctxFor(root, { locked: "fail", guard: "fail" }), "b2", { runBaseline: true });
+  core.claim(ctxFor(root, {}), "b2", { solver: "bob" });
+  await core.verify(ctxFor(root, { locked: "pass", guard: "pass" }), "b2");
+  core.payout(ctxFor(root, {}), "b2");
+  const e = books(root);
+  assert.deepEqual(e.conservation.USDC, { deposited: 62.5, balances: 62.5, held: 0, ok: true });
+  assert.deepEqual(e.balances, { "bob:USDC": 12.5, "maintainer:USDC": 50 });
+});
+
+test("escrow.json is only a snapshot: editing it cannot move funds", async () => {
+  const root = await verifiedRoot();
+  const p = path.join(root, ".settled/escrow.json");
+  const snap = JSON.parse(fs.readFileSync(p, "utf8"));
+  snap.balances = { "mallory:USDC": 1000 }; snap.holds[ID].state = "released";
+  fs.writeFileSync(p, JSON.stringify(snap));
+  assert.equal(escrowLib.audit(root).snapshot_matches, false);
+  const r = core.payout(ctxFor(root, {}), ID); // still pays from the ledger-derived hold
+  assert.equal(r.solver, "alice");
+  assert.deepEqual(books(root).balances, { "alice:USDC": 50 });
+  assert.equal(escrowLib.audit(root).snapshot_matches, true, "snapshot rewritten from ledgers");
+});
+
+test("post refuses a bounty without a positive reward", async () => {
+  const root = makeRoot();
+  const b = bounty(root); b.reward = 0;
+  fs.writeFileSync(path.join(root, ".settled/bounties", ID + ".json"), JSON.stringify(b));
+  const ctx = ctxFor(root, { locked: "fail", guard: "fail" });
+  await rejects(core.post(ctx, ID, { runBaseline: true }), /positive reward/);
+  assert.equal(ctx.runner.calls.length, 0, "refused before any Kane run");
+  assert.equal(ledger.replay(root, ID).events.length, 0);
+});
+
+test("REAL ledgers on this repo conserve balances", () => {
+  const e = escrowLib.compute(REPO);
+  assert.equal(e.ok, true);
+  assert.equal(e.conservation.USDC.deposited, e.conservation.USDC.balances + e.conservation.USDC.held);
 });
 
 // ---------------- persistent state / tamper evidence ----------------
