@@ -50,13 +50,21 @@ function readPack(packPath) {
 }
 
 // Conclusiveness rules.
-function conclusive(runEnd, mode) {
+// A baseline failure only proves the planted bug if Kane classified it as a confirmed product bug
+// AND the failing assertion is the flow's declared target check (mustFailOn), not a setup/precondition
+// checkpoint. (assertion_error.checkpoint_failed from a mis-ordered setup step is NOT bug evidence.)
+const PRODUCT_BUG = "assertion_error.confirmed_product_bug";
+const norm = (s) => String(s || "").toLowerCase().replace(/[\u201c\u201d"']/g, "").replace(/\s+/g, " ").trim();
+function conclusive(runEnd, mode, mustFailOn) {
   const meta = runEnd.per_flow_metadata || [];
   const assertions = Object.keys((runEnd.context && runEnd.context.memory) || {}).length;
   if (mode === "fail") {
     if (runEnd.status !== "failed") return `expected a failure, Kane reported ${runEnd.status}`;
-    if (!String(runEnd.reason_code || "").startsWith("assertion_error.")) return `failure is not a product-bug assertion (reason_code ${runEnd.reason_code}); infrastructure/agent errors are inconclusive`;
+    if (runEnd.reason_code !== PRODUCT_BUG) return `failure is not a confirmed product bug (reason_code ${runEnd.reason_code}); setup checkpoints, agent and infrastructure errors are inconclusive`;
     if (!meta.some((m) => m.error_message)) return "failure has no assertion error message";
+    if (!mustFailOn) return "no declared target check (baseline_expectations) for this flow";
+    const said = norm([runEnd.reason, ...meta.map((m) => m.error_message)].join(" | "));
+    if (!said.includes(norm(mustFailOn))) return `failure is on a different check than the declared target "${mustFailOn}" (Kane: ${runEnd.reason})`;
     return null;
   }
   if (runEnd.status !== "passed") return `Kane reported ${runEnd.status}: ${runEnd.reason}`;
@@ -113,7 +121,7 @@ function validateRun(dir, kind, opts) {
   if (facts.sessionId && opts.usedSessions && opts.usedSessions.has(facts.sessionId)) errors.push(`${kind}: Kane session ${facts.sessionId} was already used (${opts.usedSessions.get(facts.sessionId)}): replay rejected`);
   if (opts.expectSessions && facts.sessionId !== opts.expectSessions[kind]) errors.push(`${kind}: session ${facts.sessionId} is not the one recorded at verification (${opts.expectSessions[kind]})`);
 
-  const why = conclusive(runEnd, opts.mode);
+  const why = conclusive(runEnd, opts.mode, opts.mustFailOn);
   if (why) errors.push(`${kind}: not conclusive: ${why}`);
   return { ok: errors.length === 0, errors, facts };
 }
@@ -140,7 +148,7 @@ function checkSums(dir) {
 }
 
 // Validate a whole run directory against the locked flows and fingerprint.
-function validateRunDir(dir, { flows, combined, mode, allowMock, notBefore, usedSessions, expectSessions }) {
+function validateRunDir(dir, { flows, combined, mode, allowMock, notBefore, usedSessions, expectSessions, expectations }) {
   const errors = [];
   if (!fs.existsSync(dir)) return { ok: false, errors: [`evidence dir not found: ${dir}`], runs: {} };
   const sums = checkSums(dir);
@@ -154,7 +162,7 @@ function validateRunDir(dir, { flows, combined, mode, allowMock, notBefore, used
   }
   const runs = {};
   for (const kind of KINDS) {
-    const r = validateRun(dir, kind, { flowText: flows[kind], mode, allowMock, notBefore, usedSessions, expectSessions });
+    const r = validateRun(dir, kind, { flowText: flows[kind], mode, allowMock, notBefore, usedSessions, expectSessions, mustFailOn: expectations && expectations[kind] });
     runs[kind] = r.facts;
     errors.push(...r.errors);
   }
@@ -162,4 +170,4 @@ function validateRunDir(dir, { flows, combined, mode, allowMock, notBefore, used
   return { ok: errors.length === 0, errors, runs, sumsHash: sums.sumsHash, mock: runs.locked.mock || runs.guard.mock };
 }
 
-module.exports = { KINDS, parseNdjson, readPack, conclusive, validateRun, checkSums, validateRunDir };
+module.exports = { PRODUCT_BUG, KINDS, parseNdjson, readPack, conclusive, validateRun, checkSums, validateRunDir };

@@ -7,6 +7,7 @@
 //   settled claim <id> --solver <name>
 //   settled verify <id> [--verifier <name>]                        (runs Kane: consumes credits)
 //   settled payout <id>
+//   settled cancel <id> --reason <text> [--superseded-by <id>] [--maintainer <name>]
 //   settled status <id>
 //
 // The CLI always uses the real kane-cli runner and never accepts mocked Kane results.
@@ -34,6 +35,7 @@ const USAGE = `usage:
   settled claim <id> --solver <name>
   settled verify <id> --yes [--verifier <name>]                    (consumes Kane credits)
   settled payout <id>
+  settled cancel <id> --reason <text> [--superseded-by <id>] [--maintainer <name>]
   settled status <id>`;
 
 async function main() {
@@ -56,6 +58,7 @@ async function main() {
     case "claim": out = core.claim(ctx, id, { solver: flags.solver }); break;
     case "verify": out = await core.verify(ctx, id, { verifier: flags.verifier }); break;
     case "payout": out = core.payout(ctx, id); break;
+    case "cancel": out = core.cancel(ctx, id, { reason: flags.reason, supersededBy: flags["superseded-by"], maintainer: flags.maintainer }); break;
     case "status": out = core.statusOf(ctx, id); break;
     default: throw new SettledError(`unknown command ${cmd}\n${USAGE}`);
   }
@@ -64,6 +67,7 @@ async function main() {
   if (cmd === "claim") Object.assign(brief, { solver: out.event.data.solver, claim_id: out.event.data.claim_id });
   if (cmd === "verify") Object.assign(brief, { passed: out.passed, verdicts: out.event.data.verdicts, evidence: out.event.data.evidence_dir, errors: out.errors.length ? out.errors : undefined });
   if (cmd === "payout") Object.assign(brief, { paid_to: out.solver, amount: `${out.amount} ${out.currency}`, simulated: true });
+  if (cmd === "cancel") Object.assign(brief, { refunded_to: out.refunded_to, amount: `${out.amount} ${out.currency}`, superseded_by: out.event.data.superseded_by, simulated: true });
   if (cmd === "status") Object.assign(brief, out);
   console.log(JSON.stringify(brief, null, 2));
   return cmd === "verify" && !out.passed ? 1 : 0;

@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 let counter = 0;
 const uuid = () => crypto.randomUUID();
 
-// scenario: { locked: spec, guard: spec } where spec = 'pass' | 'fail' | 'infra' | 'vacuous' | { verdict, sessionId, startTs, title, noRunEnd }
+// scenario: { locked: spec, guard: spec } where spec = 'pass'|'fail'|'setup_fail'|'wrong_target'|'infra'|'vacuous' | { verdict, sessionId, startTs, title, noRunEnd, failOn }
 function mockRunner(scenario, { onRun } = {}) {
   return {
     name: "mock-kane",
@@ -24,17 +24,22 @@ function mockRunner(scenario, { onRun } = {}) {
       const start = spec.startTs || new Date(Date.now() + 5);
       const end = new Date(start.getTime() + 1000);
       const v = spec.verdict;
+      const passed = v === "pass" || v === "vacuous";
+      // 'fail' = confirmed product bug on the flow's target check; 'setup_fail' = a precondition checkpoint failed;
+      // 'wrong_target' = product bug reported on some other check; 'infra' = browser/agent error.
+      const reason = passed ? "Objective completed"
+        : v === "infra" ? "Browser crashed"
+        : v === "setup_fail" ? 'Checkpoint assertion failed: "Verify the cart shows \u201cCart is empty\u201d."'
+        : v === "wrong_target" ? 'Checkpoint assertion failed: "the Kane Cap price is $15.00"'
+        : `Checkpoint assertion failed: "${spec.failOn || "TARGET CHECK " + kind}"`;
+      const reasonCode = passed ? "success.complete" : v === "infra" ? "error.browser_crash" : v === "setup_fail" ? "assertion_error.checkpoint_failed" : "assertion_error.confirmed_product_bug";
       const runEnd = {
         type: "run_end", mock: true, source: "mock",
-        status: v === "pass" || v === "vacuous" ? "passed" : "failed",
-        reason: v === "pass" || v === "vacuous" ? "Objective completed" : v === "infra" ? "Browser crashed" : `Checkpoint assertion failed (${kind})`,
-        reason_code: v === "pass" || v === "vacuous" ? "success.complete" : v === "infra" ? "error.browser_crash" : "assertion_error.confirmed_product_bug",
-        result_code: v === "pass" || v === "vacuous" ? 100 : 200,
+        status: passed ? "passed" : "failed", reason, reason_code: reasonCode, result_code: passed ? 100 : 200,
         context: { memory: v === "vacuous" ? {} : { check: { extracted_value: "3", expected_value: "3" } } },
-        per_flow_metadata: [{ error_message: v === "pass" || v === "vacuous" ? null : v === "infra" ? null : "assertion failed" }],
+        per_flow_metadata: [{ error_message: passed ? null : reason }],
         credits_consumed: 0, session_dir: `~/mock-sessions/${sessionId}`, ts: end.toISOString(),
       };
-      if (v === "infra") runEnd.per_flow_metadata = [{ error_message: "browser crashed" }];
       const lines = [
         { type: "stream_start", mock: true, cli_version: "mock", ts: start.toISOString() },
         { type: "recording_state", session_id: sessionId, ts: start.toISOString() },

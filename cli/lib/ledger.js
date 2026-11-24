@@ -13,6 +13,9 @@ const TRANSITIONS = {
   verify_failed: [["claimed", "verified"], "claimed"],
   verify_passed: [["claimed", "verified"], "verified"],
   paid: [["verified"], "paid"],
+  // Maintainer withdraws the bounty (e.g. superseded by a new flow version). Not allowed once a
+  // solver holds a passing verification: that solver is owed the payout.
+  cancelled: [["open", "claimed"], "cancelled"],
 };
 
 const ledgerDir = (root) => path.join(root, ".settled", "ledger");
@@ -91,6 +94,17 @@ function release(root, id, { to, ref }) {
   return h;
 }
 
+function refund(root, id, { ref }) {
+  const esc = loadEscrow(root);
+  const h = esc.holds[id];
+  if (!h || h.state !== "held") throw new SettledError(`no held escrow for ${id}`);
+  h.state = "refunded"; h.to = h.from; h.refunded_ref = ref;
+  const key = `${h.from}:${h.currency}`;
+  esc.balances[key] = Math.round(((esc.balances[key] || 0) + h.amount) * 1e6) / 1e6;
+  writeJSONAtomic(escrowPath(root), esc);
+  return h;
+}
+
 // Single-writer lock so two commands can't interleave ledger appends.
 function withLock(root, fn) {
   const p = path.join(root, ".settled", ".lock");
@@ -105,4 +119,4 @@ async function withLockAsync(root, fn) {
   try { return await fn(); } finally { fs.closeSync(fd); fs.rmSync(p, { force: true }); }
 }
 
-module.exports = { TRANSITIONS, readEvents, replay, append, usedSessions, loadEscrow, hold, release, withLock, withLockAsync, ledgerPath };
+module.exports = { TRANSITIONS, readEvents, replay, append, usedSessions, loadEscrow, hold, release, refund, withLock, withLockAsync, ledgerPath };

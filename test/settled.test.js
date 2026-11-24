@@ -16,6 +16,9 @@ const REPO = path.join(__dirname, "..");
 const ID = "cart-badge-wrong";
 const REAL_BASELINE = "evidence/cart-badge-wrong/20261124T171620Z";
 const REAL_V1 = "evidence/cart-badge-wrong/regression/v1-false-pass-20261124T165309Z";
+const REAL_RETRY = "evidence/cart-badge-wrong/verify-20261124T175732Z-4b024942"; // guard: assertion_error.checkpoint_failed
+const REAL_TARGETS = { locked: "the header cart badge shows exactly 3", guard: "charged amount of exactly $54.00" };
+const setRealTargets = (root) => { const b = bounty(root); b.baseline_expectations = REAL_TARGETS; fs.writeFileSync(path.join(root, ".settled/bounties", ID + ".json"), JSON.stringify(b)); };
 
 function makeRoot({ withRealBaseline = false } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "settled-test-"));
@@ -26,6 +29,8 @@ function makeRoot({ withRealBaseline = false } = {}) {
   b.status = "draft";
   for (const k of ["locked", "claim", "last_verification", "payout"]) delete b[k];
   b.activation = { rule: b.activation && b.activation.rule };
+  b.baseline_expectations = { locked: "TARGET CHECK locked", guard: "TARGET CHECK guard" };
+  for (const k of ["cancellation", "superseded_by"]) delete b[k];
   b.proof_run_id = null;
   fs.writeFileSync(path.join(root, ".settled", "bounties", ID + ".json"), JSON.stringify(b, null, 2));
   if (withRealBaseline) fs.cpSync(path.join(REPO, REAL_BASELINE), path.join(root, REAL_BASELINE), { recursive: true });
@@ -52,7 +57,7 @@ async function verifiedRoot() {
 // ---------------- real evidence (read-only, no Kane calls) ----------------
 test("real v2 baseline evidence validates as a conclusive double failure", () => {
   const fp = fingerprint.check(REPO, ID);
-  const v = evidence.validateRunDir(path.join(REPO, REAL_BASELINE), { flows: fp.flows, combined: fp.computed.combined, mode: "fail", allowMock: false, usedSessions: new Map() });
+  const v = evidence.validateRunDir(path.join(REPO, REAL_BASELINE), { flows: fp.flows, combined: fp.computed.combined, mode: "fail", allowMock: false, usedSessions: new Map(), expectations: REAL_TARGETS });
   assert.equal(v.ok, true, v.errors.join("; "));
   assert.equal(v.mock, false);
   assert.equal(v.runs.locked.reason_code, "assertion_error.confirmed_product_bug");
@@ -74,6 +79,7 @@ test("v1 false-pass regression evidence is rejected against the v2 lock", () => 
 
 test("post with the real legacy baseline needs explicit maintainer attestation", async () => {
   const root = makeRoot({ withRealBaseline: true });
+  setRealTargets(root);
   const ctx = { ...ctxFor(root, {}), allowMock: false };
   await rejects(core.post(ctx, ID, { baselineDir: REAL_BASELINE }), /candidate\.json|legacy/);
   const r = await core.post(ctx, ID, { baselineDir: REAL_BASELINE, acceptLegacyBaseline: true });
@@ -85,6 +91,7 @@ test("post with the real legacy baseline needs explicit maintainer attestation",
 
 test("the same real baseline sessions cannot be used to post twice (replay)", async () => {
   const root = makeRoot({ withRealBaseline: true });
+  setRealTargets(root);
   const ctx = { ...ctxFor(root, {}), allowMock: false };
   await core.post(ctx, ID, { baselineDir: REAL_BASELINE, acceptLegacyBaseline: true });
   // Second bounty id pointing at the same flows/evidence.
@@ -118,7 +125,9 @@ test("post activates and locks only on a conclusive double failure", async () =>
 for (const [name, scenario, re] of [
   ["locked flow passes on buggy code", { locked: "pass", guard: "fail" }, /expected a failure/],
   ["guard flow passes on buggy code", { locked: "fail", guard: "pass" }, /expected a failure/],
-  ["infrastructure error instead of a product-bug assertion", { locked: "infra", guard: "fail" }, /not a product-bug assertion/],
+  ["infrastructure error instead of a product-bug assertion", { locked: "infra", guard: "fail" }, /not a confirmed product bug/],
+  ["a setup checkpoint failed (assertion_error.checkpoint_failed)", { locked: "fail", guard: "setup_fail" }, /guard: not conclusive: failure is not a confirmed product bug \(reason_code assertion_error\.checkpoint_failed\)/],
+  ["product bug reported on a different check than the declared target", { locked: "wrong_target", guard: "fail" }, /locked: not conclusive: failure is on a different check/],
   ["Kane produced no run_end", { locked: { verdict: "fail", noRunEnd: true }, guard: "fail" }, /missing locked\.run_end/],
   ["Kane ran a different objective", { locked: { verdict: "fail", title: "Add 4 shirts" }, guard: "fail" }, /different objective/],
 ]) {
@@ -282,6 +291,76 @@ test("a failed re-verification blocks payout of an earlier pass", async () => {
   const root = await verifiedRoot();
   await core.verify(ctxFor(root, { locked: "pass", guard: "fail" }), ID);
   throws(() => core.payout(ctxFor(root, {}), ID), /bounty is claimed/);
+});
+
+
+// ---------------- tightened baseline rule: regressions ----------------
+test("REGRESSION: real guard run that failed a setup checkpoint is not accepted as bug evidence", () => {
+  const fp = fingerprint.check(REPO, ID);
+  // Same evidence under the OLD rule (any assertion_error.*) would have counted as 'bug detected'.
+  const r = evidence.validateRun(path.join(REPO, REAL_RETRY), "guard", { flowText: fp.flows.guard, mode: "fail", allowMock: false, mustFailOn: REAL_TARGETS.guard });
+  assert.equal(r.facts.reason_code, "assertion_error.checkpoint_failed");
+  assert.equal(r.ok, false);
+  assert.match(r.errors.join("\n"), /not a confirmed product bug/);
+});
+
+test("REGRESSION: real v2 baseline is rejected if the declared target does not match Kane's failure", () => {
+  const fp = fingerprint.check(REPO, ID);
+  const v = evidence.validateRunDir(path.join(REPO, REAL_BASELINE), { flows: fp.flows, combined: fp.computed.combined, mode: "fail", allowMock: false, usedSessions: new Map(), expectations: { locked: REAL_TARGETS.locked, guard: "the cart badge shows exactly 3" } });
+  assert.equal(v.ok, false);
+  assert.match(v.errors.join("\n"), /guard: not conclusive: failure is on a different check/);
+});
+
+test("post refuses a bounty with no declared baseline_expectations, before running Kane", async () => {
+  const root = makeRoot();
+  const b = bounty(root); delete b.baseline_expectations;
+  fs.writeFileSync(path.join(root, ".settled/bounties", ID + ".json"), JSON.stringify(b));
+  const ctx = ctxFor(root, { locked: "fail", guard: "fail" });
+  await rejects(core.post(ctx, ID, { runBaseline: true }), /baseline_expectations/);
+  assert.equal(ctx.runner.calls.length, 0, "no Kane runs (no credits) before the bounty is well-formed");
+});
+
+test("target matching tolerates Kane's curly quotes and case", () => {
+  const runEnd = { status: "failed", reason_code: evidence.PRODUCT_BUG, reason: 'Final verification failed: \u201cThe order confirmation shows a charged amount of exactly $54.00.\u201d', per_flow_metadata: [{ error_message: "x" }] };
+  assert.equal(evidence.conclusive(runEnd, "fail", "charged amount of exactly $54.00"), null);
+});
+
+// ---------------- cancel ----------------
+test("cancel returns simulated escrow to the maintainer through a ledger event", async () => {
+  const root = await postedRoot();
+  core.claim(ctxFor(root, {}), ID, { solver: "alice" });
+  const r = core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision", maintainer: "maintainer" });
+  assert.equal(r.status, "cancelled");
+  const esc = ledger.loadEscrow(root);
+  assert.equal(esc.holds[ID].state, "refunded");
+  assert.equal(esc.balances["maintainer:USDC"], 50);
+  const last = ledger.replay(root, ID).events.pop();
+  assert.equal(last.type, "cancelled");
+  assert.equal(last.data.claimant_at_cancel, "alice");
+  assert.equal(bounty(root).cancellation.refunded_to, "maintainer");
+});
+
+test("cancelled bounties are terminal: no claim, verify, payout or second cancel", async () => {
+  const root = await postedRoot();
+  core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision" });
+  throws(() => core.claim(ctxFor(root, {}), ID, { solver: "bob" }), /bounty is cancelled/);
+  await rejects(core.verify(ctxFor(root, { locked: "pass", guard: "pass" }), ID), /bounty is cancelled/);
+  throws(() => core.payout(ctxFor(root, {}), ID), /bounty is cancelled/);
+  throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision" }), /bounty is cancelled/);
+});
+
+test("cancel is refused once a solver holds a passing verification", async () => {
+  const root = await verifiedRoot();
+  throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "trying to dodge the payout" }), /bounty is verified/);
+  assert.equal(ledger.loadEscrow(root).holds[ID].state, "held");
+});
+
+test("cancel needs the posting maintainer, a reason, and an existing successor", async () => {
+  const root = await postedRoot();
+  throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision", maintainer: "mallory" }), /only the posting maintainer/);
+  throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "x" }), /--reason/);
+  throws(() => core.cancel(ctxFor(root, {}), ID, { reason: "superseded by a flow revision", supersededBy: "nope" }), /does not exist/);
+  assert.equal(bounty(root).status, "open");
 });
 
 // ---------------- persistent state / tamper evidence ----------------
