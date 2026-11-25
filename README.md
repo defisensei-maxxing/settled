@@ -1,6 +1,21 @@
 # Settled
 
-**Bug-bounty escrow where Kane CLI is the neutral judge.** A maintainer locks a bounty to two plain-English test flows. A solver gets paid only when Kane CLI runs both flows against the solver's code and both pass, on fresh, sealed, replay-proof evidence.
+**Bug bounties that pay out only when Kane CLI verifies the fix.**
+
+A maintainer locks a bounty to two plain-English test flows. The escrow is released only when Kane CLI runs both flows against the solver's code and both pass, on fresh, sealed, replay-proof evidence. Kane CLI Online Hackathon entry; zero dependencies (Node ≥ 20 plus `kane-cli`).
+
+> **Payments are simulated.** No real money or tokens move. See [Trust model and limitations](#trust-model-and-limitations).
+
+## What you'll see
+
+- **A half fix is caught:** the badge fix alone passes the locked flow, but Kane's guard flow sees **Charged $60.00 instead of $54.00**, and the payout is refused ([run 3](evidence/cart-badge-wrong/verify-20261124T173707Z-9237c2de)).
+- **A live feedback loop (run 10):** an agent ran Kane first, saw that failure, fixed one line, passed `settled verify` and was paid, for **206.34 credits** ([evidence/autonomous-loop](evidence/autonomous-loop/README.md)).
+- **The first autonomous run** (run 9) solved the bounty from one instruction for **147.38 credits** ([evidence/autonomous-sandbox](evidence/autonomous-sandbox/README.md)).
+- **14 sealed evidence folders**, **896.94 Kane credits** of real runs, **52/52 unit tests**.
+
+## Demo video
+
+YOUTUBE_LINK
 
 ## Verify in one minute (0 Kane credits)
 
@@ -14,9 +29,25 @@ Clone the repo and run these. Nothing calls Kane; they re-check the recorded his
 | `node scripts/fingerprint.js cart-badge-wrong-v3` | `"match": true`, combined `c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa` |
 | `node cli/settled.js payout cart-badge-wrong-v3` | refused: `settled: cannot pay out: bounty is paid` (exit 1) |
 
-Kane CLI Online Hackathon entry. Zero dependencies (Node ≥ 20 plus `kane-cli`).
+## Try it with your own agent
 
-> **Payments are simulated.** No real money or tokens move. See [Trust model and limitations](#trust-model-and-limitations).
+Roughly **150–250 Kane credits** (runs 9 and 10 used 147.38 and 206.34).
+
+1. Install `kane-cli` and log in: `kane-cli login --oauth`, then check with `kane-cli whoami`.
+2. Clone the repo and make a sandbox, so the recorded history stays untouched:
+   ```bash
+   git clone git@github.com:defisensei-maxxing/settled.git && cd settled
+   scripts/demo-sandbox.sh ~/settled-try && cd ~/settled-try
+   node cli/settled.js post cart-badge-wrong-v3 --baseline evidence/cart-badge-wrong-v3/baseline-20261124T181329Z
+   ```
+   For a fair test, delete `patches/` and `docs/` in the sandbox first: they contain the fixes.
+3. Open Claude Code in the sandbox and say: **"Claim bounty cart-badge-wrong-v3 and solve it using the Settled skill."** The skill in `.claude/skills/settled/` drives Kane and hands off to `settled verify`. Run `node cli/settled.js payout cart-badge-wrong-v3` yourself once verify passes.
+
+## How the three bars are met
+
+- **End to end:** post → claim → verify → paid with real Kane, three times: rows 8–10 in [the results table](#what-has-actually-been-demonstrated) (`evidence/cart-badge-wrong-v3/verify-20261124T181728Z-0c8e4100`, `evidence/autonomous-sandbox/`, `evidence/autonomous-loop/`).
+- **Kane caught real bugs:** the half fix (row 3, `evidence/cart-badge-wrong/verify-20261124T173707Z-9237c2de`) and run 10's first guard run (`evidence/autonomous-loop/adhoc-runs/02-guard-baseline.*`), both Charged $60.00.
+- **Closed loop:** an agent acted on Kane's failure, fixed it, and Kane verified the fix: `evidence/autonomous-loop/`.
 
 ---
 
