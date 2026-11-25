@@ -36,7 +36,7 @@ Roughly **150–250 Kane credits** (runs 9 and 10 used 147.38 and 206.34).
 1. Install `kane-cli` and log in: `kane-cli login --oauth`, then check with `kane-cli whoami`.
 2. Clone the repo and make a sandbox, so the recorded history stays untouched:
    ```bash
-   git clone git@github.com:defisensei-maxxing/settled.git && cd settled
+   git clone https://github.com/defisensei-maxxing/settled.git && cd settled
    scripts/demo-sandbox.sh ~/settled-try && cd ~/settled-try
    node cli/settled.js post cart-badge-wrong-v3 --baseline evidence/cart-badge-wrong-v3/baseline-20261124T181329Z
    ```
@@ -106,7 +106,7 @@ demo-shop/                target app with two planted bugs (plain HTML + Node, z
 ## Install
 
 ```bash
-git clone git@github.com:defisensei-maxxing/settled.git && cd settled
+git clone https://github.com/defisensei-maxxing/settled.git && cd settled
 node --version                 # >= 20, no npm install needed
 npm test                       # 52 unit tests, mocked Kane, no credits
 kane-cli whoami                # real runs only; otherwise: kane-cli login --oauth
