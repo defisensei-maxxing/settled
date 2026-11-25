@@ -15,7 +15,7 @@ A maintainer locks a bounty to two plain-English test flows. The escrow is relea
 
 ## Demo video
 
-YOUTUBE_LINK
+https://youtu.be/W4i7A799Zo0
 
 ## Verify in one minute (0 Kane credits)
 
