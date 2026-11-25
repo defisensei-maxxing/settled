@@ -19,6 +19,8 @@ YOUTUBE_LINK
 
 ## Verify in one minute (0 Kane credits)
 
+No Kane account, API key or kane-cli install needed: just Node 20+ and git. Every command below runs offline against the sealed evidence in this repo.
+
 Clone the repo and run these. Nothing calls Kane; they re-check the recorded history and sealed evidence already in the repo.
 
 | Command | Expected result |
@@ -28,6 +30,8 @@ Clone the repo and run these. Nothing calls Kane; they re-check the recorded his
 | `node cli/settled.js escrow` | `"USDC": {"deposited": 100, "balances": 100, "held": 0, "ok": true}`: deposited = balances + held |
 | `node scripts/fingerprint.js cart-badge-wrong-v3` | `"match": true`, combined `c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa` |
 | `node cli/settled.js payout cart-badge-wrong-v3` | refused: `settled: cannot pay out: bounty is paid` (exit 1) |
+
+Or run all five at once: `npm run verify`
 
 ## Try it with your own agent
 

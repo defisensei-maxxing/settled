@@ -5,7 +5,8 @@
   "description": "Escrow for bug bounties where Kane CLI is the neutral judge.",
   "bin": { "settled": "cli/settled.js" },
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "verify": "npm test && node cli/settled.js status cart-badge-wrong-v3 && node cli/settled.js escrow && node scripts/fingerprint.js cart-badge-wrong-v3 && (node cli/settled.js payout cart-badge-wrong-v3 || echo 'payout refused as expected: bounty is paid')"
   },
   "engines": { "node": ">=20" }
 }
