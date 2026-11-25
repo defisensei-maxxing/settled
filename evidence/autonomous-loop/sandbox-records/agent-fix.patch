@@ -1,0 +1,13 @@
+diff --git a/demo-shop/server.js b/demo-shop/server.js
+index 960d9eb..7597bb8 100644
+--- a/demo-shop/server.js
++++ b/demo-shop/server.js
+@@ -16,7 +16,7 @@ function chargeFor(items) {
+   for (const { id, qty } of items) {
+     const p = CATALOG[id];
+     if (!p) throw new Error("unknown item " + id);
+-    total += p.listPrice * qty;
++    total += p.salePrice * qty;
+   }
+   return Math.round(total * 100) / 100;
+ }

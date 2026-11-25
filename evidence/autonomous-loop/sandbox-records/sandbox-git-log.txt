@@ -1,0 +1,3 @@
+fef55ce 2026-11-25 01:45:32 +0000 Record feedback-loop solve: claim, verify_passed (real Kane), simulated payout to loop-agent
+e0995e7 2026-11-25 01:44:34 +0000 Fix cart-badge-wrong-v3: charge sale price at checkout
+660e5f9 2026-11-25 01:31:37 +0000 Loop sandbox initial state: cart-badge-wrong-v3 open (recorded real baseline), half-fix applied, hints removed

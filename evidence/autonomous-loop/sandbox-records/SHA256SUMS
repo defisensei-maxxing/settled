@@ -1,0 +1,6 @@
+79951e95a5b27c7a4326c7844d8c82392976cd6335d7fe4e1235d846a755cdf0  ./agent-fix.patch
+ed1acefe94ec9f8d8194a7a4f56f4b9ce0c774935afc719feae64dd0bb7aea26  ./bounty-cart-badge-wrong-v3.json
+dc017eeaa2f9794029e0030341f775e9f373de250669932d525800b2bc23dc9b  ./escrow.json
+3dba5574dfb3f67cfe07d12d8e91570b732df7f20b7b2f32447fa17f4443e84e  ./ledger-cart-badge-wrong-v3.ndjson
+c0aede73950c6af8e1947f98e1758bd89534b6848d0d13491423781cff29421d  ./sandbox-git-log.txt
+2451bf79b2cc71fd942e2392ba8d66eaf448d39b05da3ab5bc79abab971c1ffd  ./setup-starting-code.diff

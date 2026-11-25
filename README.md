@@ -116,7 +116,7 @@ node cli/settled.js escrow
 
 ## What has actually been demonstrated
 
-Every row is real `kane-cli` runs (kane-cli 0.10.9, Chrome, headless) with sealed evidence in this repo. Rows 1–8 are single runs; row 9 combines four.
+Every row is real `kane-cli` runs (kane-cli 0.10.9, Chrome, headless) with sealed evidence in this repo. Rows 1–8 are single runs; row 9 combines four and row 10 combines six.
 
 | # | Run | Code under test | Locked | Guard | Credits | Evidence |
 |---|---|---|---|---|---|---|
@@ -129,7 +129,8 @@ Every row is real `kane-cli` runs (kane-cli 0.10.9, Chrome, headless) with seale
 | 7 | v3 baseline | buggy | ❌ badge 2 | ❌ charged $60.00 → **posted** | 70.45 | [baseline-…181329Z](evidence/cart-badge-wrong-v3/baseline-20261124T181329Z) |
 | 8 | v3 verify | both fixed | ✅ badge 3, $54.00 | ✅ charged $54.00 → **paid** | 61.28 | [verify-…181728Z](evidence/cart-badge-wrong-v3/verify-20261124T181728Z-0c8e4100) |
 | 9 | **Autonomous agent** (sandbox), 2 practice runs + verify | agent's own fix | ✅ badge 3, $54.00 | ✅ charged $54.00 → **paid** | 147.38 | [autonomous-sandbox](evidence/autonomous-sandbox/README.md) |
-| | | | | | **690.60** | |
+| 10 | **Autonomous agent, Kane feedback loop** (sandbox, starts from the half fix): Kane first, then fix, then verify | half fix → agent's own fix | ✅ first run already passing; ✅ verify | ❌ **Charged $60.00** first, then ✅ charged $54.00 → **paid** | 206.34 | [autonomous-loop](evidence/autonomous-loop/README.md) |
+| | | | | | **896.94** | |
 
 What these runs show:
 - **Kane's verdicts need guarding.** Run 1 passed buggy code: Kane looped until the lagging badge read 3 (4 shirts in the cart), and checked out an empty cart ($0 = $0). That is why flows use fixed click counts and absolute values, and why baselines must fail first.
@@ -140,7 +141,7 @@ What these runs show:
 - **Autonomous repair through the Settled skill** (run 9). In an isolated sandbox with answer hints removed, a fresh Claude Code agent got one instruction: *"Claim bounty cart-badge-wrong-v3 as solver `settled-agent` and solve it using the Settled skill."* It was limited to 3 attempts and 300 credits. It diagnosed both bugs, fixed them in **one attempt** (two single-line changes), confirmed each flow with Kane, and passed `settled verify` (both flows `success.complete`, Charged $54.00) for **147.38 credits**. The maintainer checked the sealed evidence and code hash, then released the simulated 50 USDC. Details: [evidence/autonomous-sandbox](evidence/autonomous-sandbox/README.md).
 
 **Limits of the autonomous result:**
-- Kane *confirmed* the agent's fix rather than steering it. The agent diagnosed from the bounty's recorded Kane failures plus reading the code, and no new run failed.
+- In run 9, Kane *confirmed* the agent's fix rather than steering it: the agent diagnosed from the bounty's recorded Kane failures plus reading the code, and no new run failed. **Run 10 closes that gap:** starting from the half fix, the agent ran Kane first, got the guard failure (Charged $60.00), fixed only the overcharge (one line), and passed verify, for 206.34 credits ([evidence/autonomous-loop](evidence/autonomous-loop/README.md)). The timestamps show the failure came before the code change. It was a single fail → fix → pass loop, and the same $60 failure is also visible in the bounty's recorded baseline.
 - The bugs are easy: single-line, in a ~60-line app.
 - The agent is the same model family that fixed these bugs earlier in the project (with no access to that conversation), and its fix is identical.
 - Sandbox isolation was by instruction, not enforced.
