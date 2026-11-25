@@ -5,7 +5,7 @@
   "description": "Escrow for bug bounties where Kane CLI is the neutral judge.",
   "bin": { "settled": "cli/settled.js" },
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   },
   "engines": { "node": ">=20" }
 }

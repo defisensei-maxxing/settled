@@ -2,6 +2,18 @@
 
 **Bug-bounty escrow where Kane CLI is the neutral judge.** A maintainer locks a bounty to two plain-English test flows. A solver gets paid only when Kane CLI runs both flows against the solver's code and both pass, on fresh, sealed, replay-proof evidence.
 
+## Verify in one minute (0 Kane credits)
+
+Clone the repo and run these. Nothing calls Kane; they re-check the recorded history and sealed evidence already in the repo.
+
+| Command | Expected result |
+|---|---|
+| `npm test` | `tests 52`, `pass 52`, `fail 0` |
+| `node cli/settled.js status cart-badge-wrong-v3` | `"status": "paid"`, events `posted`, `claimed`, `verify_passed`, `paid`; escrow `released` to `demo-solver` |
+| `node cli/settled.js escrow` | `"USDC": {"deposited": 100, "balances": 100, "held": 0, "ok": true}`: deposited = balances + held |
+| `node scripts/fingerprint.js cart-badge-wrong-v3` | `"match": true`, combined `c5bda0a8fd229c44e89b0928b3791f8da4123a3be540052189f96379ec1b7ffa` |
+| `node cli/settled.js payout cart-badge-wrong-v3` | refused: `settled: cannot pay out: bounty is paid` (exit 1) |
+
 Kane CLI Online Hackathon entry. Zero dependencies (Node ≥ 20 plus `kane-cli`).
 
 > **Payments are simulated.** No real money or tokens move. See [Trust model and limitations](#trust-model-and-limitations).
